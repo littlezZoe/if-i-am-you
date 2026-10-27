@@ -126,6 +126,12 @@
   /* 首页 */
   .cert-badge{font-size:13px;letter-spacing:.3em;color:var(--ink-soft);
     border:1px dashed var(--line);padding:6px 16px;margin:10px 0 20px}
+  /* 语言切换 */
+  #lang-btn{position:fixed;top:16px;right:18px;z-index:100;
+    font-family:inherit;font-size:13px;letter-spacing:.18em;text-indent:.18em;
+    border:1.5px solid var(--ink);background:rgba(253,253,247,.85);color:var(--ink);
+    border-radius:999px;padding:6px 16px;cursor:pointer;transition:background .2s,color .2s}
+  #lang-btn:active{background:var(--ink);color:var(--paper)}
   /* Toast */
   #toast{position:fixed;bottom:36px;left:50%;transform:translateX(-50%) translateY(20px);
     background:var(--ink);color:var(--paper);font-size:14px;letter-spacing:.15em;
@@ -158,9 +164,24 @@
   }
   .minigame-btn:active{background:var(--ink);color:var(--paper)}
   .mg-log{margin-top:12px;font-size:14px;color:var(--ink-soft);min-height:24px;white-space:pre-line}
+  /* 选择回顾动画：先看「你选了什么」，再看后果 */
+  .choice-pop{animation:choicepop .9s cubic-bezier(.3,.7,.4,1) both}
+  @keyframes choicepop{0%{opacity:0;transform:translateY(12px) scale(.92)}60%{transform:scale(1.02)}100%{opacity:1;transform:none}}
+  #d-react .choice-label{font-size:13px;letter-spacing:.4em;text-indent:.4em;color:var(--ink-soft);margin-top:22px;display:block}
+  #d-react .choice-name{font-size:22px;letter-spacing:.08em;margin-top:6px;display:block}
+  /* 管理面板 */
+  .admin-card{border:1px solid var(--line);background:#fffdf8;padding:14px 20px;margin-bottom:12px;text-align:left;width:100%;max-width:640px}
+  .ac-name{font-size:17px;letter-spacing:.08em;border-bottom:1px dashed var(--line);padding-bottom:8px}
+  .ac-date{float:right;font-size:12px;color:var(--ink-soft);letter-spacing:.05em}
+  .ac-row{font-size:13px;color:var(--ink-soft);margin-top:8px;line-height:1.8}
+  .ac-row b{color:var(--ink);font-weight:600}
+  .ac-surv-ok{color:var(--teal)} .ac-surv-bad{color:var(--danger)}
+  .admin-empty{font-size:14px;color:var(--ink-soft);letter-spacing:.2em;margin-top:30px}
 </style>
 </head>
 <body data-page-node-id="x3VWut5oxqJOcEZ2CdxpF4">
+
+<button id="lang-btn" aria-label="Switch language">EN</button>
 
 <div id="hud" data-page-node-id="Im5HgU2BLDGxUAcoaOCFdX">
   <div class="hud-box" data-page-node-id="Ek4fqE7nJ2M3BzNFotFtld"><span id="safety-icon" data-page-node-id="fCp35ngDwD8jLyRhharyBK">○</span><span id="safety-label" data-page-node-id="RLDSNoOJ5s1ql6SSkaKEGN">平静</span> 安全度</div>
@@ -177,7 +198,8 @@
     <p class="poem dim" id="home-welcome" data-page-node-id="KQfKzh9lhxCWWD6Om0dwSS"></p>
     <div class="cert-badge" id="home-badge" data-page-node-id="xxgyA5mFYVbPnbnkYTKJDv">你已获得学习证书</div>
     <div class="btn-row" data-page-node-id="tkbe9CPIdF02F9pMuCmp1r">
-      <button class="btn" id="btn-replay" data-page-node-id="oSdHHOXSPUC4iljrbA9skQ">重新体验</button>
+      <button class="btn" id="btn-human" data-page-node-id="oSdHHOXSPUC4iljrbA9skQ">人类视角</button>
+      <button class="btn" id="btn-bird" data-page-node-id="HSBkkrqzzDjCksPPskkTmd">黑脸琵鹭</button>
       <button class="btn" id="btn-view-cert" data-page-node-id="l46tbYvytCLKO3RAxfkUpX">查看证书</button>
     </div>
   </section>
@@ -256,7 +278,11 @@
 你刚刚亲身体验了自己的选择，
 对一只琵鹭的影响。</p>
     <p class="poem dim" data-page-node-id="0uEzB0qG3rtDfRAcLo8Vc3">如果重新来过，
-你会做出不同的决定吗？</p>
+你会做出不同的决定吗？
+
+这一次，每做出一个选择，
+我们都会翻开一份真实的新闻剪影——
+那些事，都真实发生过。</p>
     <div class="btn-row" data-page-node-id="0rKi8KNvGrm7VhblydM3ux"><button class="btn" id="btn-brief3" data-page-node-id="aoBcvBBDrETIOILyLxpuvm">重新选择</button></div>
   </section>
 
@@ -266,6 +292,7 @@
     <div class="ending-tag" id="ending-tag" data-page-node-id="vQ628m346orJi7mBdK4HC8"></div>
     <div class="scene-art" id="ending-art" data-page-node-id="Urg7cjSv9kE5CLH2LcjKuF"></div>
     <p class="poem" id="ending-text" data-page-node-id="G1uafHS5VCfkum4nXNVZHF"></p>
+    <div class="tap-hint" id="ending-tap">轻触屏幕任意位置 · 继续</div>
     <div class="silhouettes" id="silhouettes" data-page-node-id="0P5XcZzIAhPC05yWHKJ7qT"></div>
     <p class="coming" data-page-node-id="CjkMOhUjbTYZ0Vg1LEepeA">COMING SOON · 深圳红树林生物系列 · 敬请期待</p>
     <div class="btn-row" data-page-node-id="DnTRJDG7PAo48Kh7su2vi9"><button class="btn" id="btn-to-cert" data-page-node-id="hcJqHix6btTglCMplR5IAq">领取证书</button></div>
@@ -280,6 +307,26 @@
       <button class="btn small" id="btn-download" data-page-node-id="mp3PC6fbAErgeKM1RJCbYY">下载证书</button>
       <button class="btn small" id="btn-share" data-page-node-id="YhCB3AuM9L6cQocMHAcDkL">分享证书</button>
       <button class="btn small" id="btn-home" data-page-node-id="IXb2Iv1tG6GlFGojvlBMcB">返回首页</button>
+    </div>
+  </section>
+
+  <!-- 管理面板 -->
+  <section class="screen" id="s-admin">
+    <p class="kicker">管理中心 · 仅限管理员</p>
+    <h2>用户数据</h2>
+    <div id="admin-login">
+      <input class="name-input" id="admin-pass" type="password" placeholder="请输入管理密码" style="width:280px">
+      <p class="input-note">双击太阳进入 · 请输入密码</p>
+      <div class="btn-row"><button class="btn" id="btn-admin-login">进入</button></div>
+    </div>
+    <div id="admin-panel" style="display:none;width:100%;flex-direction:column;align-items:center">
+      <input class="name-input" id="admin-search" placeholder="搜索昵称或结局" style="width:280px;margin-top:8px">
+      <p class="input-note">支持按昵称、结局名称、是否存活搜索</p>
+      <div id="admin-table" style="width:100%;max-width:640px;display:flex;flex-direction:column;align-items:center"></div>
+      <div class="btn-row">
+        <button class="btn" id="btn-admin-play">体验游戏</button>
+        <button class="btn" id="btn-admin-back">返回首页</button>
+      </div>
     </div>
   </section>
 
@@ -339,6 +386,8 @@ const DECISIONS = [
         react:{art:"forageMurky", line:"顺着雨水管，油汤直接进了海湾。\n它扫了一整天，喙里全是泥。"}},
       {t:"倒进马桶冲走", s:"反正最后都是进下水道", w:-1, art:"cToilet",
         react:{art:"forageMurky", line:"马桶通向污水管。\n但突然多出来的油，处理厂也吃不消。"}},
+      {t:"倒进厨房的水池", s:"水池有下水管，冲下去就行", w:-1, art:"cSinkPour",
+        react:{art:"forageMurky", line:"水池的下水管又细又弯。\n油一路凝在管壁上，越积越厚——\n处理厂要多花好大的力气。"}},
       {t:"汤水滤渣进水槽，剩菜进厨余", s:"厨房污水会先送去处理厂", w:2, art:"cSink",
         react:{art:"forageClean", line:"退潮后，滩涂里的鱼多得很。"}}
     ],
@@ -416,8 +465,8 @@ function birdFlying(){ return `
     <path class="wing" d="M-6 -2 C6 -38 44 -58 86 -54 C64 -26 24 -6 -4 0 Z" fill="${C.wing}" stroke="${C.ink}" stroke-width="2"/>
     <path class="wing-b" d="M-2 0 C10 -24 40 -38 72 -38 C54 -16 24 0 0 4 Z" fill="${C.white}" stroke="${C.ink}" stroke-width="1.6"/>
     <path d="M-40 20 C-20 32 12 38 44 34 M-32 24 C-14 34 12 38 36 36" stroke="${C.ink}" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <path d="M-34 4 C-58 5 -78 12 -90 19 C-78 24 -56 26 -34 22 Z" fill="${C.white}" stroke="${C.ink}" stroke-width="1.8"/>
     <path d="M-60 10 C-40 -6 0 -10 30 -2 C42 2 46 8 41 13 C22 24 -22 26 -46 18 C-56 15 -64 13 -60 10 Z" fill="${C.white}" stroke="${C.ink}" stroke-width="2"/>
-    <path d="M-58 12 L-78 20 L-54 23 Z" fill="${C.white}" stroke="${C.ink}" stroke-width="1.6"/>
     <path d="M36 2 C48 -2 56 -8 60 -14" stroke="${C.ink}" stroke-width="11" fill="none" stroke-linecap="round"/>
     <path d="M36 2 C48 -2 56 -8 60 -14" stroke="${C.white}" stroke-width="7" fill="none" stroke-linecap="round"/>
     <circle cx="64" cy="-18" r="7.5" fill="${C.white}" stroke="${C.ink}" stroke-width="2"/>
@@ -461,6 +510,7 @@ const ART = {
   intro(){ return `<svg viewBox="0 0 400 220">
     <rect x="0" y="0" width="400" height="140" fill="${C.sky}"/>
     <circle cx="330" cy="40" r="20" fill="#f4e3b8"/>
+    <circle cx="330" cy="40" r="34" fill="transparent" data-sun="1" style="cursor:pointer"/>
     ${waterBand(140, C.water)}
     ${mangrove(30,150,1.1)} ${mangrove(300,152,0.9)}
     ${birdsDistant()}
@@ -632,6 +682,21 @@ const ART = {
     <path d="M122 46 L122 38 L136 38 L136 46" fill="none" stroke="${C.ink}" stroke-width="1.8"/>
     <path d="M122 58 L134 58 M122 66 L134 66 M122 74 L134 74" stroke="#fdfdf7" stroke-width="2"/>
     <path d="M96 76 C104 72 110 66 114 60" stroke="${C.greyD}" stroke-width="1.6" fill="none" stroke-dasharray="3 3"/>
+  </svg>`;},
+  cSinkPour(){ return `<svg viewBox="0 0 160 110">
+    <rect x="0" y="0" width="160" height="110" fill="#e8eef0"/>
+    <path d="M30 46 L108 46 L101 84 L37 84 Z" fill="#fdfdf7" stroke="${C.ink}" stroke-width="2"/>
+    <rect x="62" y="24" width="6" height="16" fill="${C.greyD}"/>
+    <path d="M56 24 L74 24" stroke="${C.greyD}" stroke-width="4" stroke-linecap="round"/>
+    <path d="M52 64 L86 64" stroke="${C.greyD}" stroke-width="1.6"/>
+    <g transform="rotate(-22 44 30)">
+      <rect x="24" y="22" width="36" height="17" rx="3" fill="#9aa3a8" stroke="${C.ink}" stroke-width="2"/>
+      <path d="M60 27 L70 30 M70 30 L76 28 M70 30 L76 32" stroke="${C.ink}" stroke-width="2.6" fill="none" stroke-linecap="round"/>
+      <path d="M36 26 q6 -5 12 0" stroke="#b8b2a2" stroke-width="2" fill="none"/>
+    </g>
+    <path d="M66 44 C70 52 66 58 70 66" stroke="#a8a074" stroke-width="3" fill="none" stroke-dasharray="5 4"/>
+    <circle cx="74" cy="72" r="2.5" fill="#8f8c62"/>
+    <ellipse cx="78" cy="70" rx="4" ry="2" fill="#a8a074"/>
   </svg>`;},
   cSnooze(){ return `<svg viewBox="0 0 160 110">
     <rect x="0" y="0" width="160" height="110" fill="${C.night}" opacity=".92"/>
@@ -874,10 +939,43 @@ const ART = {
 
 /* 其他生物剪影 */
 const CREATURES = `
-<svg viewBox="0 0 90 70"><g fill="none" stroke="${C.ink}" stroke-width="1.6" stroke-linecap="round"><path d="M20 44 C30 30 52 28 62 40 C66 44 64 50 58 52 C46 56 30 54 22 48 Z"/><path d="M60 42 q8 -2 12 2"/><circle cx="66" cy="43" r="1.2" fill="${C.ink}"/><path d="M30 54 l-2 8 m24 -8 l2 8"/><path d="M14 62 q10 -6 20 0"/></g></svg>
-<svg viewBox="0 0 90 70"><g fill="none" stroke="${C.ink}" stroke-width="1.6" stroke-linecap="round"><path d="M24 50 q10 -18 26 -12 q10 4 6 12 q-6 10 -22 8 Z"/><circle cx="50" cy="40" r="1.3" fill="${C.ink}"/><path d="M52 44 q6 2 8 6"/><path d="M20 60 q14 -6 28 0 t28 0"/></g></svg>
-<svg viewBox="0 0 90 70"><g fill="none" stroke="${C.ink}" stroke-width="1.6" stroke-linecap="round"><path d="M36 34 C44 22 62 20 70 30 C60 34 52 40 44 40 Z"/><path d="M66 28 q6 -6 8 -12 q2 8 -2 12"/><circle cx="68" cy="26" r="1.1" fill="${C.ink}"/><path d="M42 40 l-2 18 m10 -18 l2 18"/><path d="M14 62 q20 -8 40 0"/></g></svg>
-<svg viewBox="0 0 90 70"><g fill="none" stroke="${C.ink}" stroke-width="1.6" stroke-linecap="round"><path d="M26 46 C30 32 44 24 56 28 C60 30 62 34 60 38 L50 48 C42 52 32 52 26 46 Z"/><path d="M36 52 l-2 10 m20 -10 l0 10 m-14 -10 l-4 10 m22 -10 l4 10"/><path d="M54 30 q6 -8 4 -14 q8 6 6 14"/><circle cx="56" cy="32" r="1.1" fill="${C.ink}"/></g></svg>`;
+<svg viewBox="0 0 90 70"><g stroke="${C.ink}" stroke-width="1.7" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <ellipse cx="38" cy="48" rx="15" ry="9" fill="#fdfdf7"/>
+  <path d="M28 56 l-5 6 M35 57 l-3 7 M44 57 l3 7 M50 55 l6 6"/>
+  <path d="M33 40 l-2 -8 M43 40 l2 -8"/>
+  <circle cx="31" cy="30" r="2.2" fill="${C.ink}"/><circle cx="45" cy="30" r="2.2" fill="${C.ink}"/>
+  <path d="M51 44 C60 41 66 35 66 26 C74 31 77 39 72 46 C67 52 58 51 51 48 Z" fill="#fdfdf7"/>
+  <path d="M25 47 q-6 1 -9 5" stroke-width="1.4"/>
+</g></svg>
+<svg viewBox="0 0 90 70"><g stroke="${C.ink}" stroke-width="1.7" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M16 46 C26 34 46 30 58 38 C66 43 66 50 58 53 C46 58 26 56 16 50 Z" fill="#fdfdf7"/>
+  <path d="M32 33 C38 26 48 25 54 30"/>
+  <circle cx="52" cy="42" r="3.2" fill="${C.ink}"/>
+  <path d="M59 47 q5 2 9 0" stroke-width="1.4"/>
+  <path d="M20 48 C14 47 9 43 7 37"/>
+  <path d="M38 57 l0 7 M50 56 l2 7"/>
+  <path d="M8 66 q18 -5 38 0 t38 0" stroke-width="1.5"/>
+</g></svg>
+<svg viewBox="0 0 90 70"><g stroke="${C.ink}" stroke-width="1.7" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M30 43 C34 33 50 30 60 36 C67 40 67 48 58 52 C46 57 33 53 30 45 Z" fill="#fdfdf7"/>
+  <path d="M58 37 C66 33 68 23 60 17 C54 13 48 15 47 21"/>
+  <circle cx="54" cy="19" r="3.4" fill="#fdfdf7"/>
+  <circle cx="53" cy="18" r="1" fill="${C.ink}"/>
+  <path d="M51 17 L33 13" stroke="#c9a15e" stroke-width="2.4"/>
+  <path d="M38 54 l-2 12 M52 55 l2 12"/>
+  <path d="M10 67 q20 -5 40 0 t40 0" stroke-width="1.5"/>
+</g></svg>
+<svg viewBox="0 0 90 70"><g stroke="${C.ink}" stroke-width="1.7" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M20 47 C22 37 34 31 48 33 C60 35 66 41 63 48 C59 56 42 58 30 55 C23 53 19 51 20 47 Z" fill="#fdfdf7"/>
+  <path d="M61 42 C67 40 70 33 70 26 L63 31 C60 35 60 39 61 42 Z" fill="#fdfdf7"/>
+  <path d="M63 29 l-3 -9 7 5 Z M69 29 l3 -9 4 9 Z" fill="#fdfdf7" stroke-width="1.4"/>
+  <circle cx="67" cy="33" r="1.1" fill="${C.ink}"/>
+  <path d="M71 36 l6 1 M71 38 l6 2" stroke-width="1.2"/>
+  <path d="M22 49 C14 52 9 58 8 65"/>
+  <path d="M15 55 l4 2 M11 59 l4 1 M9 63 l4 0" stroke-width="1.3"/>
+  <path d="M30 56 l-2 8 M40 57 l0 8 M52 55 l3 8"/>
+  <circle cx="34" cy="43" r="1" fill="${C.ink}"/><circle cx="44" cy="41" r="1" fill="${C.ink}"/><circle cx="52" cy="45" r="1" fill="${C.ink}"/>
+</g></svg>`;
 
 /* =========================================================
    状态
@@ -896,7 +994,21 @@ function toast(msg){
   const t=$('toast'); t.textContent=msg; t.classList.add('show');
   clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove('show'),1800);
 }
-function setArt(id,name){ $(id).innerHTML = ART[name] ? ART[name]() : ''; }
+function setArt(id,name){
+  const el=$(id);
+  el.innerHTML = ART[name] ? ART[name]() : '';
+  el.classList.remove('slowfade'); void el.offsetWidth; el.classList.add('slowfade');
+}
+/* 旅程进度图：整段越冬之旅走到哪一步了 */
+const JOURNEY=[['10月','抵达'],['11月','夜栖'],['12月','觅食'],['1月','渔网'],['1月','寒潮'],['3月','北归']];
+function setJourney(i,dead){
+  const el=$('journey'); el.classList.add('on');
+  el.innerHTML='<div class="j-line">'+JOURNEY.map(([m,l],k)=>{
+    const cls = k<i ? 'past' : (k===i ? (dead?'dead':'now') : '');
+    return '<div class="j-node '+cls+'"><div class="j-dot"></div><div class="j-lb">'+m+' · '+l+'</div></div>';
+  }).join('')+'</div>';
+}
+function fadeStage(html){ const st=$('d-stage'); st.innerHTML=html; st.classList.remove('slowfade'); void st.offsetWidth; st.classList.add('slowfade'); }
 /* 判断第 i 个决策的选择是否为好选项（统一走数据，杜绝索引错位） */
 const isGood = (round,i) => DECISIONS[i].opts[S[round][i]].w>0;
 const wOf = (round,i) => DECISIONS[i].opts[S[round][i]].w;
@@ -918,6 +1030,7 @@ function renderDecision(){
   $('d-desc').textContent = d.desc;
   $('d-hint').classList.remove('show');
   $('d-react').classList.remove('on');
+  S._phase=null;
   $('d-opts').style.display='';
   $('d-desc').style.display='';
   clearTimeout(reactTimer);
@@ -925,7 +1038,7 @@ function renderDecision(){
   $('d-react-tap').classList.remove('on');
 
   /* 舞台：彩色场景 + 琵鹭飞入 */
-  $('d-stage').innerHTML = ART[STAGE_SCENES[S.q]]();
+  fadeStage(ART[STAGE_SCENES[S.q]]());
   /* 选项：交错浮现 */
   const wrap = $('d-opts'); wrap.innerHTML='';
   d.opts.forEach((o,i)=>{
@@ -950,22 +1063,46 @@ function choose(i){
   const d = DECISIONS[S.q];
   S[S.round][S.q]=i;
   const o=d.opts[i];
-  /* 琵鹭的反应动画 + 一句短文字，点击任意位置继续 */
+  /* 第一幕：先回放「你做了这个选择」的小动画 */
   $('d-opts').style.display='none';
   $('d-desc').style.display='none';
-  fadeStage(ART[o.react.art]());
-  $('d-react').classList.add('on');
-  $('d-react-line').textContent = o.react.line;
-  $('d-react-note').textContent = S.round==='r2'
-    ? (S.r1[S.q]!==i ? '决策已修改' : '保持原决策') : '';
-  $('d-react-tap').classList.add('on');
   clearTimeout(reactTimer);
-  reactTimer=setTimeout(()=>{ document.addEventListener('pointerdown',tapNext,{once:true}); },450);
+  document.removeEventListener('pointerdown',tapNext);
+  document.removeEventListener('pointerdown',advanceChoice);
+  S._phase='choice';
+  const st=$('d-stage');
+  st.innerHTML='<div class="choice-pop">'+ART[o.art]()+'</div>';
+  st.classList.remove('slowfade'); void st.offsetWidth; st.classList.add('slowfade');
+  $('d-react-art').innerHTML='';
+  $('d-react').classList.add('on');
+  $('d-react-line').innerHTML='<span class="choice-label">你 的 选 择</span><span class="choice-name">「'+o.t+'」</span>';
+  $('d-react-note').textContent='';
+  $('d-react-tap').classList.add('on');
+  /* 停留片刻后自动进入后果，也可以轻触跳过 */
+  reactTimer=setTimeout(advanceChoice,2600);
+  setTimeout(()=>{ if(S._phase==='choice') document.addEventListener('pointerdown',advanceChoice,{once:true}); },550);
+}
+function advanceChoice(){
+  if(S._phase!=='choice') return;
+  S._phase='react';
+  clearTimeout(reactTimer);
+  document.removeEventListener('pointerdown',advanceChoice);
+  $('d-react-tap').classList.remove('on');
+  const o=DECISIONS[S.q].opts[S[S.round][S.q]];
+  /* 第二幕：这个选择带来的后果 */
+  fadeStage(ART[o.react.art]());
+  $('d-react-line').textContent=o.react.line;
+  $('d-react-note').textContent = S.round==='r2'
+    ? (S.r1[S.q]!==S[S.round][S.q] ? '决策已修改' : '保持原决策') : '';
+  $('d-react-tap').classList.add('on');
+  reactTimer=setTimeout(()=>{ if(S._phase==='react') document.addEventListener('pointerdown',tapNext,{once:true}); },450);
 }
 function tapNext(){
+  if(S._phase!=='react') return;
   document.removeEventListener('pointerdown',tapNext);
   $('d-react-tap').classList.remove('on');
   $('d-react').classList.remove('on');
+  S._phase=null;
   nextDecision();
 }
 function nextDecision(){
@@ -1103,19 +1240,19 @@ function winterStart(){
   S._deathShown=false;
   const queue=[];
   /* 到达 */
-  queue.push(()=>eventView('arrive',
+  queue.push(()=>{ setJourney(0); eventView('arrive',
     `2024 年 10 月 15 日，清晨。\n\n经过数千公里的飞行，\n你——一只黑脸琵鹭，终于抵达深圳湾。\n\n你要在这里度过整个冬天，\n攒够体力，明年春天才能北归繁殖。\n\n你的生存，取决于这里的环境，\n以及……这座城市里无数普通人的选择。`,
-    [['继续',runNext]]));
+    [['继续',runNext]]); });
   /* 决策1：夜栖地（鱼塘投票） */
   const w0=wOf('r1',0);
   if(w0>=1){
-    queue.push(()=>{ hpDelta(15); safetyDelta(20);
+    queue.push(()=>{ hpDelta(15); safetyDelta(20); setJourney(1);
       eventView('safeRoost',
       `你发现了一片安静的鱼塘——\n水浅，鱼多，几乎没有干扰。\n\n这里将成为你整个冬天的夜栖地。\n<span class="fx">体力 +15 ｜ 安全度上升</span>`,
       [['继续',runNext]]); });
   }else{
     const lost = w0<=-2;
-    queue.push(()=>{ hpDelta(lost?-15:-8); safetyDelta(lost?-30:-15);
+    queue.push(()=>{ hpDelta(lost?-15:-8); safetyDelta(lost?-30:-15); setJourney(1);
       eventView('lostRoost',
       lost
         ? `你常去的那片鱼塘，消失了。\n\n围栏立了起来，机器日夜轰鸣。\n你必须连夜寻找新的夜栖地。\n<span class="fx bad">体力 -15 ｜ 安全度大幅下降</span>`
@@ -1140,15 +1277,15 @@ function winterStart(){
   /* 决策3：渔网 */
   const w2=wOf('r1',2);
   if(w2>=1){
-    queue.push(()=>{ hpDelta(5);
+    queue.push(()=>{ hpDelta(5); setJourney(3);
       eventView('boatNet',
       `这片水域不久前有人清理过。\n没有看不见的网，没有藏起来的地笼。\n\n你几乎忘了危险是什么感觉。\n<span class="fx">体力 +5</span>`,
       [['继续',runNext]]); });
   }else{
-    queue.push(()=>netGame(w2<=-2));
+    queue.push(()=>{ setJourney(3); netGame(w2<=-2); });
   }
   /* 寒潮 → 琵鹭选择怎么过夜 */
-  queue.push(coldChoice);
+  queue.push(()=>{ setJourney(4); coldChoice(); });
   runEvents(queue);
 }
 
@@ -1349,16 +1486,16 @@ function deathSequence(){
   S._deathShown=true; S.survived=false;
   $('hud').classList.remove('on');
   const badLines=[
-    '老鱼塘被建成了商业区，它失去了最安全的夜栖地',
-    '游客一次次翻过围栏走近，它被迫飞逃、体力耗尽',
-    '那张废弃的渔网没有被上报回收，它的脚被缠住，再也无法飞翔',
-    '半锅油汤被倒进了雨水篦子，滩涂变浑，它花了远超想象的时间觅食'
+    ['老鱼塘被建成了商业区，它失去了最安全的夜栖地','the old fish pond became a commercial zone and it lost its safest night roost'],
+    ['游客一次次翻过围栏走近，它被迫飞逃、体力耗尽','tourists kept climbing the fence and it fled again and again until its strength ran out'],
+    ['那张废弃的渔网没有被上报回收，它的脚被缠住，再也无法飞翔','the abandoned fishing net was never reported and its foot was caught — it never flew again'],
+    ['半锅油汤被倒进了雨水篦子，滩涂变浑，它花了远超想象的时间觅食','half a pot of greasy soup went down the storm drain, the flat turned murky, and foraging took far longer than it should have']
   ];
   let recap='';
   for(let i=0;i<4;i++){
-    if(!isGood('r1',i)) recap += `还记得吗？\n当${badLines[i]}时——\n\n`;
+    if(!isGood('r1',i)) recap += (LANGV==='en' ? `Remember?\nWhen ${badLines[i][1]} —\n\n` : `还记得吗？\n当${badLines[i][0]}时——\n\n`);
   }
-  if(!recap) recap='体力耗尽之前，它经历了太多看不见的困难——\n\n';
+  if(!recap) recap = LANGV==='en' ? 'Before its strength ran out, it endured too many unseen hardships —\n\n' : '体力耗尽之前，它经历了太多看不见的困难——\n\n';
   eventView('nightSil',
     `<span class="bad">这只黑脸琵鹭的旅程，在这里结束了。</span>\n\n它没能等到春天，\n没能飞回北方的繁殖地，\n没能延续自己的生命。\n\n而导致这一切的，\n是几个月里，一些看似普通的小事……\n\n${recap}这些，都是你在人类视角中做出的选择。`,
     [['回到人类视角',()=>{ show('s-brief3'); }]]);
@@ -1464,22 +1601,22 @@ function drawCert(){
   const serif='"Songti SC","STSong","Noto Serif SC","SimSun",serif';
   ctx.textAlign='center';
   ctx.fillStyle=ink;
-  ctx.font='600 52px '+serif;
-  ctx.fillText('深圳湾红树林生态学习证书', W/2, 210);
+  ctx.font='600 '+(LANGV==='en'?42:52)+'px '+serif;
+  ctx.fillText(T('深圳湾红树林生态学习证书'), W/2, 210);
   ctx.font='20px '+serif; ctx.fillStyle=soft;
-  ctx.fillText('SHENZHEN BAY MANGROVE ECOLOGY CERTIFICATE', W/2, 248);
+  ctx.fillText(T('SHENZHEN BAY MANGROVE ECOLOGY CERTIFICATE'), W/2, 248);
   ctx.fillStyle=soft; ctx.font='24px '+serif;
-  ctx.fillText('兹 证 明', W/2, 340);
+  ctx.fillText(T('兹 证 明'), W/2, 340);
   ctx.fillStyle=ink; ctx.font='600 64px '+serif;
   ctx.fillText(S.name, W/2, 430);
   ctx.strokeStyle=soft; ctx.lineWidth=1.5;
   ctx.beginPath(); ctx.moveTo(W/2-130,448); ctx.lineTo(W/2+130,448); ctx.stroke();
   ctx.fillStyle=ink; ctx.font='26px '+serif;
-  ctx.fillText('已完成《如果我是它》互动学习', W/2, 530);
-  ctx.fillText('理解了普通人的选择对野生动物的影响', W/2, 578);
-  ctx.fillText('学会了从其他生命的视角思考问题', W/2, 626);
+  ctx.fillText(T('已完成《如果我是它——红树林 × 黑脸琵鹭》互动学习'), W/2, 530);
+  ctx.fillText(T('理解了普通人的选择对野生动物的影响'), W/2, 578);
+  ctx.fillText(T('学会了从其他生命的视角思考问题'), W/2, 626);
   ctx.fillStyle=soft; ctx.font='italic 26px '+serif;
-  ctx.fillText('「'+ENDINGS[S._ending].comment+'」', W/2, 700);
+  ctx.fillText(LANGV==='en' ? ('\u201C'+T(ENDINGS[S._ending].comment)+'\u201D') : ('\u300C'+ENDINGS[S._ending].comment+'\u300D'), W/2, 700);
   /* 简笔琵鹭（白身黑喙黄羽） */
   ctx.save(); ctx.translate(W/2, 780); ctx.lineCap='round';
   ctx.strokeStyle=ink; ctx.lineWidth=5;
@@ -1507,14 +1644,49 @@ function drawCert(){
   ctx.bezierCurveTo(-6,1,4,-10,12,-20);
   ctx.bezierCurveTo(24,-34,38,-42,50,-42); ctx.closePath(); ctx.fill();
   ctx.restore();
+  /* —— 红树林湿地元素：左上朝阳、候鸟，左右下角红树与水面 —— */
+  ctx.lineCap='round';
+  /* 左上角：朝阳 */
+  ctx.fillStyle='#f7e3c8'; ctx.strokeStyle='#ecd27a'; ctx.lineWidth=3;
+  ctx.beginPath(); ctx.arc(170,150,24,0,Math.PI*2); ctx.fill(); ctx.stroke();
+  /* 右上角：远来的候鸟 */
+  ctx.strokeStyle=ink; ctx.lineWidth=2;
+  const certBird=(x,y)=>{ ctx.beginPath(); ctx.moveTo(x-10,y); ctx.quadraticCurveTo(x-5,y-7,x,y); ctx.quadraticCurveTo(x+5,y-7,x+10,y); ctx.stroke(); };
+  certBird(W/2+250,160); certBird(W/2+305,178); certBird(W/2+205,190);
+  /* 左右下角：红树林（支柱根 + 圆冠） */
+  const certMangrove=(x,y,s)=>{
+    ctx.save(); ctx.translate(x,y); ctx.scale(s,s);
+    ctx.strokeStyle=ink; ctx.lineWidth=3;
+    ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(0,-30); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(0,-12); ctx.quadraticCurveTo(-11,-7,-16,4); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(0,-12); ctx.quadraticCurveTo(11,-7,16,4); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(-7,2); ctx.lineTo(-10,7); ctx.moveTo(7,2); ctx.lineTo(10,7); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(0,-14); ctx.quadraticCurveTo(-6,-4,-8,5); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(0,-14); ctx.quadraticCurveTo(6,-4,8,5); ctx.stroke();
+    ctx.fillStyle='#7fa786'; ctx.strokeStyle=ink; ctx.lineWidth=2.4;
+    const blob=(cx,cy,r)=>{ ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2); ctx.fill(); ctx.stroke(); };
+    blob(0,-46,17); blob(-14,-36,11); blob(14,-36,11);
+    ctx.restore();
+  };
+  certMangrove(150,876,1.3); certMangrove(255,886,.9);
+  certMangrove(W-150,876,1.3); certMangrove(W-255,886,.9);
+  /* 水面波纹 */
+  ctx.strokeStyle=teal; ctx.lineWidth=2;
+  const certWave=(x,y)=>{ ctx.beginPath(); ctx.moveTo(x,y); ctx.quadraticCurveTo(x+11,y-5,x+22,y); ctx.quadraticCurveTo(x+33,y+5,x+44,y); ctx.stroke(); };
+  certWave(80,892); certWave(130,908); certWave(330,898);
+  certWave(W-124,892); certWave(W-174,908); certWave(W-374,898);
   /* 日期与落款 */
   ctx.fillStyle=soft; ctx.font='22px '+serif;
-  ctx.fillText('颁发日期：'+certDate(), W/2, 868);
+  ctx.fillText(T('颁发日期：')+certDate(), W/2, 868);
   ctx.fillStyle=ink; ctx.font='24px '+serif;
-  ctx.fillText('深圳湾红树林生态教育项目', W/2, 906);
+  ctx.fillText(T('由深圳明湾学校学生创作，感谢支持'), W/2, 906);
 }
 function certDate(){
   const d=new Date();
+  if(LANGV==='en'){
+    const M=['January','February','March','April','May','June','July','August','September','October','November','December'];
+    return `${M[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
+  }
   return `${d.getFullYear()} 年 ${d.getMonth()+1} 月 ${d.getDate()} 日`;
 }
 
@@ -1534,8 +1706,14 @@ $('btn-brief2').onclick=winterStart;
 $('btn-brief3').onclick=()=>startRound('r2');
 $('btn-to-cert').onclick=()=>{
   drawCert();
+  const rec={name:S.name, r1:S.r1.slice(), r2:S.r2.slice(), ending:S._ending, survived:S.survived, date:certDate()};
   try{
-    localStorage.setItem('swb_cert', JSON.stringify({name:S.name, ending:S._ending, survived:S.survived, date:certDate()}));
+    localStorage.setItem('swb_cert', JSON.stringify(rec));
+    let users=JSON.parse(localStorage.getItem('swb_users')||'[]');
+    if(!Array.isArray(users)) users=[];
+    users=users.filter(u=>u.name!==S.name);
+    users.push(rec);
+    localStorage.setItem('swb_users', JSON.stringify(users));
   }catch(e){}
   show('s-cert');
 };
@@ -1548,7 +1726,9 @@ $('btn-download').onclick=()=>{
   toast('证书已下载');
 };
 $('btn-share').onclick=async ()=>{
-  const text=`我在《如果我是你》互动科普中完成了人类与黑脸琵鹭的双视角体验（${ENDINGS[S._ending].tag.split('·')[1].trim()}），获得了深圳湾红树林生态学习证书。2025年，全球只剩 7,081 只黑脸琵鹭——如果我是它，我需要什么？`;
+  const text = LANGV==='en'
+    ? `I experienced both perspectives in "If I Were It" (${T(ENDINGS[S._ending].tag)}) and earned the Shenzhen Bay Mangrove Ecology Certificate. Only 7,081 Black-faced Spoonbills remain worldwide in 2025 — if I were it, what would I need?`
+    : `我在《如果我是它——红树林 × 黑脸琵鹭》互动科普中完成了人类与黑脸琵鹭的双视角体验（${ENDINGS[S._ending].tag.split('·')[1].trim()}），获得了深圳湾红树林生态学习证书。2025年，全球只剩 7,081 只黑脸琵鹭——如果我是它，我需要什么？`;
   try{
     if(navigator.share){ await navigator.share({title:'深圳湾红树林生态学习证书', text}); }
     else{ await navigator.clipboard.writeText(text); toast('分享文案已复制'); }
@@ -1556,11 +1736,17 @@ $('btn-share').onclick=async ()=>{
 };
 $('btn-home').onclick=()=>{ goHome(); };
 
+function getCert(){ try{ return JSON.parse(localStorage.getItem('swb_cert')); }catch(e){ return null; } }
+function resetProgress(){
+  S.hp=60; S.safety=80; S.survived=true; S._deathShown=false; S._phase=null;
+  $('hud').classList.remove('on'); $('journey').classList.remove('on');
+}
 function goHome(){
-  let cert=null;
-  try{ cert=JSON.parse(localStorage.getItem('swb_cert')); }catch(e){}
+  const cert=getCert();
   if(cert){
-    $('home-welcome').textContent=`欢迎回来，${cert.name}\n你已获得学习证书，想要重新体验吗？`;
+    $('home-welcome').textContent = LANGV==='en'
+      ? `Welcome back, ${cert.name}\nWhich perspective shall we continue with?`
+      : `欢迎回来，${cert.name}\n用这个身份，从哪个视角继续？`;
     setArt('home-art','home');
     show('s-home');
   }else{
@@ -1568,23 +1754,166 @@ function goHome(){
     show('s-intro');
   }
 }
-$('btn-replay').onclick=()=>{
+/* 人类视角：沿用现有身份，重做 5 个人类选择 */
+$('btn-human').onclick=()=>{
+  const cert=getCert(); if(!cert){ goHome(); return; }
+  S.name=cert.name; $('brief1-name').textContent=cert.name;
   S.r1=[null,null,null,null,null]; S.r2=[null,null,null,null,null];
-  S.hp=60; S.safety=80; S.survived=true; S._deathShown=false;
-  setArt('intro-art','intro');
-  show('s-intro');
+  resetProgress();
+  show('s-brief1');
+};
+/* 黑脸琵鹭视角：沿用现有身份和第一次的人类选择，直接进入越冬之旅 */
+$('btn-bird').onclick=()=>{
+  const cert=getCert(); if(!cert){ goHome(); return; }
+  S.name=cert.name;
+  if(Array.isArray(cert.r1) && cert.r1.length===5 && cert.r1.every(v=>v!==null)){
+    S.r1=cert.r1.slice();
+  }else{
+    toast(T('先完成「人类视角」，再来化身为它'));
+    S.r1=[null,null,null,null,null]; S.r2=[null,null,null,null,null];
+    resetProgress();
+    show('s-brief1');
+    return;
+  }
+  S.r2=[null,null,null,null,null];
+  resetProgress();
+  winterStart();
 };
 $('btn-view-cert').onclick=()=>{
-  let cert=null;
-  try{ cert=JSON.parse(localStorage.getItem('swb_cert')); }catch(e){}
+  const cert=getCert();
   if(!cert){ goHome(); return; }
   S.name=cert.name; S._ending=cert.ending; S.survived=cert.survived;
   drawCert();
   show('s-cert');
 };
 
+/* =========================================================
+   管理面板：双击首页的太阳进入
+========================================================= */
+const ADMIN_PASS='hi1313littlezadmin';
+$('home-art').addEventListener('dblclick',e=>{
+  if(e.target.closest && e.target.closest('[data-sun]')) openAdmin();
+});
+$('btn-admin-login').onclick=()=>{
+  if($('admin-pass').value===ADMIN_PASS){
+    sessionStorage.setItem('swb_admin','1');
+    $('admin-pass').value='';
+    openAdmin();
+    toast(T('欢迎回来，管理员'));
+  }else{
+    toast(T('密码不对哦'));
+  }
+};
+$('admin-pass').addEventListener('keydown',e=>{ if(e.key==='Enter') $('btn-admin-login').click(); });
+$('admin-search').addEventListener('input',renderAdminTable);
+$('btn-admin-play').onclick=()=>{
+  S.r1=[null,null,null,null,null]; S.r2=[null,null,null,null,null];
+  resetProgress(); S.name='';
+  $('name-input').value='';
+  setArt('intro-art','intro');
+  show('s-intro');
+};
+$('btn-admin-back').onclick=goHome;
+function openAdmin(){
+  const auth=sessionStorage.getItem('swb_admin')==='1';
+  $('admin-login').style.display=auth?'none':'';
+  $('admin-panel').style.display=auth?'flex':'none';
+  if(auth) renderAdminTable();
+  show('s-admin');
+}
+function renderAdminTable(){
+  let users=[];
+  try{ users=JSON.parse(localStorage.getItem('swb_users')||'[]'); }catch(e){}
+  if(!Array.isArray(users)) users=[];
+  const q=$('admin-search').value.trim().toLowerCase();
+  if(q){
+    users=users.filter(u=>{
+      const e=ENDINGS[u.ending]||{};
+      const surv=u.survived?'成功越冬':'未能越冬';
+      return (u.name||'').toLowerCase().includes(q)
+        || (e.tag||'').toLowerCase().includes(q)
+        || (e.comment||'').toLowerCase().includes(q)
+        || surv.includes(q);
+    });
+  }
+  const wrap=$('admin-table');
+  if(!users.length){
+    wrap.innerHTML='<div class="admin-empty">'+(q?T('没有匹配的结果'):T('还没有用户数据'))+'</div>';
+    return;
+  }
+  const esc=s=>String(s).replace(/</g,'&lt;');
+  wrap.innerHTML=users.slice().reverse().map(u=>{
+    const e=ENDINGS[u.ending]||{tag:'未知结局',comment:''};
+    const pick=(r,i)=>{ try{ return esc(T(DECISIONS[i].opts[u[r][i]].t)); }catch(err){ return '—'; } };
+    const r1s=[0,1,2,3,4].map(i=>pick('r1',i)).join(' ｜ ');
+    const r2s=[0,1,2,3,4].map(i=>pick('r2',i)).join(' ｜ ');
+    const surv=u.survived?'<span class="ac-surv-ok">'+T('琵鹭成功越冬')+'</span>':'<span class="ac-surv-bad">'+T('琵鹭未能越冬')+'</span>';
+    return `<div class="admin-card">
+      <div class="ac-name">${esc(u.name||'—')}<span class="ac-date">${esc(u.date||'')}</span></div>
+      <div class="ac-row"><b>${T('人类视角')}：</b>${r1s}</div>
+      <div class="ac-row"><b>${T('反思选择')}：</b>${r2s}</div>
+      <div class="ac-row"><b>${T('结局')}：</b>${esc(T(e.tag))}（${esc(T(e.comment))}）｜ ${surv}</div>
+    </div>`;
+  }).join('');
+}
+
+
+/* =========================================================
+   中英双语
+========================================================= */
+let LANGV='zh'; try{ LANGV=localStorage.getItem('swb_lang')||'zh'; }catch(e){}
+const EN_DICT={"深圳湾 · 红树林": "Shenzhen Bay · Mangroves", "如果我是它": "If I Were It", "你已获得学习证书": "You have earned your certificate", "重新体验": "Play Again", "查看证书": "View Certificate",
+"倒进厨房的水池": "Pour It Down the Kitchen Sink", "水池有下水管，冲下去就行": "The sink has a drain — it will just wash away, right?",
+"水池的下水管又细又弯。": "The pipe under the kitchen sink is narrow and bent.", "油一路凝在管壁上，越积越厚——": "The oil clings to the pipe wall, layer upon layer —", "处理厂要多花好大的力气。": "and the treatment plant has to work so much harder.",
+"你 的 选 择": "YOUR CHOICE", "先完成「人类视角」，再来化身为它": "Finish the Human Perspective first, then become the spoonbill",
+"管理中心 · 仅限管理员": "Admin Center · Authorized Only", "用户数据": "User Data", "请输入管理密码": "Enter admin password", "双击太阳进入 · 请输入密码": "Double-click the sun to enter · Password required",
+"进入": "Enter", "搜索昵称或结局": "Search name or ending", "支持按昵称、结局名称、是否存活搜索": "Search by name, ending, or survival",
+"体验游戏": "Play the Experience", "返回首页": "Back to Home", "欢迎回来，管理员": "Welcome back, admin", "密码不对哦": "Wrong password",
+"没有匹配的结果": "No matching results", "还没有用户数据": "No user data yet", "反思选择": "Reflected Choices", "结局": "Ending",
+"琵鹭成功越冬": "The spoonbill survived the winter", "琵鹭未能越冬": "The spoonbill did not survive the winter", "如果我是它 · 同理心旅程": "If I Were It · A Journey of Empathy", "欢迎来到深圳湾红树林": "Welcome to the Mangroves of Shenzhen Bay", "这里是全球 4.6% 黑脸琵鹭的越冬家园": "Winter home to 4.6% of the world’s Black-faced Spoonbills", "每年有近 10 万只候鸟在此停歇": "Nearly 100,000 migratory birds rest here every year", "在这个互动故事中，你将体验两种截然不同的视角：": "In this interactive story, you will live two very different perspectives:", "普通人的日常选择，与一只琵鹭的命运": "the everyday choices of an ordinary person, and the fate of a spoonbill", "请输入你的姓名": "Enter your name", "你的姓名将用于完成证书，我们会妥善保管你的个人信息": "Your name will appear on your certificate. We will keep your information safe.", "开始旅程": "Begin the Journey", "第一部分": "Part One", "人类视角": "Human Perspective", "你好，": "Hello, ", "现在，让我们开始这段旅程。": "Now, let us begin this journey.", "你只是一位普通的深圳市民。": "You are an ordinary resident of Shenzhen.", "接下来是 5 个平常日子里的选择——": "Ahead are 5 choices from ordinary days —", "它们看起来都很小，": "each looks small,", "但每一件，都可能悄悄改变一只黑脸琵鹭的一生。": "yet each may quietly change the life of a Black-faced Spoonbill.", "没有标准答案，跟随你的直觉就好。": "There are no right answers — just follow your instinct.", "进入今天的生活": "Step Into the Day", "第一部分 · 人类视角": "Part One · Human Perspective", "第三部分 · 人类视角 · 反思": "Part Three · Human Perspective · Reflected", "决策 1 / 5": "Decision 1 / 5", "第一次：你选了这一项": "Round 1: you chose this", "轻触屏幕任意位置 · 继续": "Tap anywhere to continue", "决策已修改": "Changed", "保持原决策": "Kept the same", "第二部分": "Part Two", "黑脸琵鹭视角": "A Spoonbill’s Perspective", "你的 5 个选择已完成。": "Your 5 choices are recorded.", "现在，让我们看看这些平常的小事，": "Now let us see what these ordinary little things", "对另一只生命的整个冬天意味着什么……": "mean to another life over an entire winter…", "化身琵鹭": "Become the Spoonbill", "继续": "Continue", "第三部分": "Part Three", "人类视角 · 反思": "Human Perspective · Reflected", "现在，让我们回到人类视角。": "Now, back to the human perspective.", "你刚刚亲身体验了自己的选择，": "You have just experienced first-hand", "对一只琵鹭的影响。": "what your choices meant to a spoonbill.", "如果重新来过，": "If you could choose again,", "你会做出不同的决定吗？": "would you decide differently?", "重新选择": "Choose Again", "第四部分 · 结局": "Part Four · Ending", "COMING SOON · 深圳红树林生物系列 · 敬请期待": "COMING SOON · Creatures of the Shenzhen Mangroves · Stay Tuned", "领取证书": "Receive Your Certificate", "第五部分": "Part Five", "深圳湾红树林生态学习证书": "Shenzhen Bay Mangrove Ecology Certificate", "SHENZHEN BAY MANGROVE ECOLOGY CERTIFICATE": "IF I WERE IT — MANGROVES × BLACK-FACED SPOONBILL", "兹 证 明": "This is to certify that", "已完成《如果我是它——红树林 × 黑脸琵鹭》互动学习": "has completed “If I Were It — Mangroves × Black-faced Spoonbill”", "理解了普通人的选择对野生动物的影响": "understood how the everyday choices of ordinary people shape the fate of wildlife", "学会了从其他生命的视角思考问题": "learned to see the world from the point of view of other lives", "颁发日期：": "Issued: ", "由深圳明湾学校学生创作，感谢支持": "Created by students of Shenzhen Mingwan School · Thank you for your support", "欢迎回来，": "Welcome back, ", "你已获得学习证书，想要重新体验吗？": "You have earned your certificate. Care to experience it again?", "请先输入你的姓名": "Please enter your name first", "证书已下载": "Certificate downloaded", "分享文案已复制": "Share text copied", "平静": "Calm", "警觉": "Alert", "危险": "Danger", "安全度大幅下降": "Safety drops sharply", "安全度下降": "Safety drops", "安全度上升": "Safety rises", "安全度": "Safety", "体力持续流失": "Stamina keeps draining", "体力 +": "Stamina +", "体力 -": "Stamina -", "体力": "Stamina", "｜": "|", "（": " (", "）": ")", "周末的鱼塘": "The Old Fish Pond", "你小区旁边那片老鱼塘地块要改造了，社区议事会正在征求居民意见。": "The old fish-pond plot by your neighbourhood is being redeveloped. The community council is gathering residents’ opinions.", "建成商业综合体": "Build a commercial complex", "更多店铺、更热闹，周末有地方逛": "More shops, more buzz — somewhere to go on weekends", "建成滨水商业街，留一小片水塘": "Build a waterfront mall, keep a small pond", "看起来也有水有绿化，但人流不会少": "Looks green and watery, but the crowds will come", "保留成生态鱼塘公园": "Keep it as an ecological fish-pond park", "水面和滩涂都留下，限制人流": "Keep the water and the mudflat, limit visitors", "塔吊的灯亮了一整夜。": "The crane lights blazed all night.", "它连夜飞走，去找新的落脚点。": "It flew away in the dark, looking for a new roost.", "水塘太小，人声离得太近。": "The pond is too small, the voices too close.", "它盘旋了三圈，没有落下去。": "It circled three times, and did not land.", "夜里，它有了一个安静的落脚点。": "That night, it had a quiet place to rest.", "那次表决之后，它的夜栖地出了问题。": "After that vote, its night roost went wrong.", "周末去湾边": "A Day at the Bay", "难得的好天气，你去深圳湾看鸟。滩涂上正落着一群黑脸琵鹭。": "A rare fine day. You go birdwatching at Shenzhen Bay, where a group of Black-faced Spoonbills rests on the mudflat.", "翻过围栏走近拍照": "Climb the fence for a closer photo", "能拍到更清楚的照片": "You can get a clearer shot", "蹲在滩涂边投喂面包": "Squat by the flat and feed them bread", "你觉得这样是在帮它": "You feel like you are helping", "在观鸟屋安静观察": "Watch quietly from the bird hide", "隔开一段距离，用镜头拉远": "Keep your distance; let the lens zoom", "太近了——扑棱！": "Too close — flap, flap!", "它被惊起，飞走了。": "Startled, it takes off and flies away.", "面包屑落在滩涂上。": "Breadcrumbs land on the mudflat.", "它犹豫着凑近——那不是它的食物。": "It hesitantly comes near — that is not its food.", "隔着围栏，它低头觅食，没有被打扰。": "Behind the fence it forages, undisturbed.", "有人靠近的每一次，它都得丢下食物逃开。": "Every time someone came close, it had to drop its food and flee.", "滩涂上的渔网": "The Net on the Mudflat", "傍晚散步，你在滩涂边看到一张被丢弃的废渔网，半浸在水里。": "On an evening walk you see an abandoned fishing net by the mudflat, half-soaked in the water.", "与我无关，走开": "Not my business — walk on", "反正会有专人处理": "Someone will deal with it sooner or later", "拍张照发到群里，问问是谁的": "Photograph it and ask in the group chat", "发完消息，继续散步": "Send the message, keep walking", "拍照上报回收志愿者": "Photograph and report it to the cleanup volunteers", "顺手的事，一分钟就好": "A one-minute favour", "水很平静。": "The water looks calm.", "水下的那张网，它看不见。": "The net below — it cannot see it.", "群里没人回复。": "No one in the group replies.", "那张网还在水里，等着。": "The net is still there, waiting.", "几天后，有人把那张网捞走了。": "Days later, someone pulled that net out.", "水下那团看不见的网，差点让它再也飞不起来。": "That invisible net nearly stopped it from flying again.", "晚饭后的半锅油汤": "Half a Pot of Greasy Soup", "晚饭后收拾桌子，锅里剩了半锅油汤和菜渣。": "Clearing the table after dinner, you find half a pot of greasy soup and scraps.", "楼下路边就有一个雨水篦子。": "Right by the road downstairs is a storm drain.", "连汤带油倒进雨水篦子": "Pour it all into the storm drain", "离家最近，几步路的事": "The closest option — just a few steps", "倒进马桶冲走": "Flush it down the toilet", "反正最后都是进下水道": "It all ends up in the sewer anyway", "汤水滤渣进水槽，剩菜进厨余": "Strain it into the sink; scraps into food waste", "厨房污水会先送去处理厂": "Kitchen water goes to the treatment plant first", "顺着雨水管，油汤直接进了海湾。": "Down the rain pipe, the greasy soup went straight into the bay.", "它扫了一整天，喙里全是泥。": "It swept all day — its bill full of mud.", "马桶通向污水管。": "The toilet leads to the sewer.", "但突然多出来的油，处理厂也吃不消。": "But a sudden surge of oil is more than the plant can handle.", "退潮后，滩涂里的鱼多得很。": "After the tide went out, the flat was full of fish.", "雨水篦子直通海湾，那片滩涂的水变浑了。": "The storm drain runs straight to the bay — that flat turned murky.", "凌晨的邀请": "A Before-Dawn Invitation", "志愿者群里招募人手：下周清晨的黑脸琵鹭全球同步调查，要早起。": "The volunteer group is recruiting for next week’s dawn Black-faced Spoonbill global census. You must get up early.", "起不来，把闹钟按掉了": "Can’t get up — silence the alarm", "少我一个不影响什么": "One person less won’t matter", "报了名，但睡过了头": "Signed up, but overslept", "心里想去，身体很诚实": "Willing heart, sleepy body", "报名了，迟到了一小时": "Joined, but an hour late", "赶了个尾巴，帮忙记了些数据": "Caught the tail end; helped record some data", "早早到场，全程帮忙记录": "Arrive early, record the whole count", "观鸟屋需要更多双眼睛": "The hide needs more pairs of eyes", "那个清晨，观测记录少了一页。": "That morning, a page was missing from the survey records.", "没有人数它。": "No one counted it.", "观测点等了她二十分钟。": "The survey team waited twenty minutes.", "少一双眼睛，就少一片滩涂被看见。": "One pair of eyes less — one flat less seen.", "那个清晨，有一双眼睛": "That morning, one pair of eyes", "记下了一部分数字。": "recorded part of the numbers.", "记下了关于它的每一个数字。": "recorded every number about it.", "有人的地方，才有人为它说话。": "Only where people care does someone speak for it.", "2024 年 10 月 15 日，清晨。": "October 15, 2024. Dawn.", "经过数千公里的飞行，": "After thousands of kilometres of flight,", "你——一只黑脸琵鹭，终于抵达深圳湾。": "you — a Black-faced Spoonbill — have finally reached Shenzhen Bay.", "你要在这里度过整个冬天，": "You will spend the whole winter here,", "攒够体力，明年春天才能北归繁殖。": "gaining enough strength to fly north and breed next spring.", "你的生存，取决于这里的环境，": "Your survival depends on this place,", "以及……这座城市里无数普通人的选择。": "and on… the countless small choices of ordinary people in this city.", "你发现了一片安静的鱼塘——": "You find a quiet fish pond —", "水浅，鱼多，几乎没有干扰。": "shallow water, plenty of fish, almost no disturbance.", "这里将成为你整个冬天的夜栖地。": "This will be your night roost for the whole winter.", "你常去的那片鱼塘，消失了。": "The fish pond you always used is gone.", "围栏立了起来，机器日夜轰鸣。": "Fences up, machines roaring day and night.", "你必须连夜寻找新的夜栖地。": "You must search through the night for a new roost.", "你常去的那片鱼塘，被改成了热闹的商业街。": "The pond you always used has become a busy shopping street.", "剩下的水面又小又吵，落不下去。": "The water left is small and noisy — no way to land.", "你得重新找地方。": "You must find somewhere else.", "天快黑了，工地还没有停。": "Dusk falls; the worksite has not stopped.", "今晚，睡在哪里？": "Where will you sleep tonight?", "飞去远处安静的滩涂": "Fly to a distant, quiet flat", "要多飞一段夜路，但那里没有人": "A long flight in the dark — but no people there", "落在旁边的高压线塔上": "Land on the pylon nearby", "近，省力，但铁塔冷得扎脚": "Close and easy, but the cold steel bites your feet", "挤进附近的芦苇丛": "Squeeze into the reeds nearby", "离工地最近，整夜都是轰鸣": "Closest to the worksite — roaring all night", "你摸黑飞了很远，终于落在一片安静的水面。": "You fly far in the dark and finally settle on quiet water.", "翅膀很酸，但至少，没有人声。": "Your wings ache — but at least, no voices.", "你在铁塔上缩了一夜。": "You huddle on the pylon all night.", "风吹得厉害，天亮时腿脚都僵了。": "The wind is fierce; by dawn your legs are stiff.", "芦苇丛整夜都在震动。": "The reeds tremble all night.", "你一次次惊醒，天亮时疲惫不堪。": "You startle awake again and again, exhausted by dawn.", "潮水退了，到了吃饭的时候。": "The tide is out; time to eat.", "今天，去哪里觅食？": "Where will you forage today?", "开阔的滩涂中央": "The open middle of the flat", "鱼最多，但四周空旷，无处可躲": "Most fish — but open all around, nowhere to hide", "红树林边缘": "The edge of the mangroves", "安静安全，只是鱼少一些": "Quiet and safe — just fewer fish", "排水口附近": "Near the outfall", "常有碎屑漂来，但气味有点不对": "Scraps often drift here — but the smell is off", "你落在滩涂中央，把长喙扫进水里。": "You land mid-flat and sweep your bill through the water.", "希望这里没有打扰。": "Let there be no disturbance here.", "滩涂中央的水有一股怪味。": "The water here smells strange.", "你硬着头皮开始扫喙。": "You start sweeping anyway.", "红树替你挡住了风和人影。": "The mangroves block the wind and the shadows.", "你贴着树影觅食——安心，但收获一般。": "You forage in the tree-shade — at ease, but the pickings are thin.", "排水口的水面上浮着一层油花。": "A film of oil floats on the outfall water.", "你扫了半天，只捞起一些碎屑。": "You sweep and sweep — only scraps.", "水流带来了不少碎屑，小鱼在附近打转。": "The current brings scraps; small fish circle nearby.", "但这里没有遮掩，你得多留神。": "But there is no cover here — stay alert.", "开始觅食": "Foraging begins", "潮水退去，滩涂上到处是小鱼小虾。": "The tide is out; the flat teems with small fish and shrimp.", "把勺状的长喙扫进水里，几乎不会落空。": "Sweep your spoon bill through the water — you will hardly miss.", "你把长喙扫进水里。": "You sweep your bill through the water.", "有鱼，但不多——要花些工夫。": "Some fish, but not many — it takes effort.", "你把长喙扫进水里——水是浑的，气味不对。": "You sweep your bill — the water is murky; the smell is wrong.", "小鱼小虾少得可怜。": "Pitifully few fish and shrimp.", "收获不错，这个冬天可以吃得很好。": "A good haul — you will eat well this winter.", "不算丰盛，但省着点吃，也够撑。": "Not rich, but enough if you economize.", "这样的效率，远远填不饱肚子。": "At this rate, your belly will stay empty.", "低头觅食": "Forage", "找到吃的！体力 +": "Found food! Stamina +", "什么也没找到……": "Found nothing…", "共获得体力 +": "Stamina gained +", "几个游客翻过围栏，带着狗朝你走来——": "Tourists climb over the fence, a dog at their side, walking toward you —", "快飞离！": "Fly, now!", "振翅飞逃": "Flap & Flee", "你在最后一刻腾空而起，心跳如鼓。": "You burst into the air at the last second, heart pounding.", "受惊之后，很久都无法安心觅食。": "After the fright, you cannot forage in peace for a long while.", "你飞得慢了半拍，狗叫声几乎贴着翅膀掠过。": "You were half a beat slow; the barking grazed your wings.", "你落到了更远的滩涂上，浑身发抖。": "You land on a far flat, trembling all over.", "这个冬天，你已经被迫飞逃了无数次……": "This winter, you have been forced to flee countless times…", "这片水域不久前有人清理过。": "These waters were cleaned not long ago.", "没有看不见的网，没有藏起来的地笼。": "No hidden nets, no hidden traps.", "你几乎忘了危险是什么感觉。": "You have almost forgotten what danger feels like.", "你的脚掠过水底，忽然碰到一团滑腻的东西。": "Your foot grazes the bottom and touches something slick.", "你本能地一蹬——还好，只是缠住的水草。": "You kick instinctively — luckily, only tangled weed.", "但这片水域，让你不敢再大意。": "But you will never be careless in these waters again.", "你的脚被水下的什么东西缠住了——": "Something underwater has tangled your foot —", "是那张被丢弃的渔网！": "the abandoned fishing net!", "越挣越紧。你必须拼命挣扎。": "The more you struggle, the tighter it gets. You must fight with everything you have.", "挣扎！": "Struggle!", "你用尽全身力气扭动身体（": "You twist with all your strength (", "你终于挣脱了。": "You finally tear free.", "脚上留下深深的勒痕，羽毛凌乱不堪。": "Deep welts mark your leg; your feathers are a mess.", "从今往后，你会害怕每一片安静的水域。": "From now on, every quiet water will frighten you.", "……": "…", "一月，寒潮南下。": "January. A cold wave sweeps south.", "气温骤降，滩涂结了薄冰。": "The temperature plunges; thin ice forms on the flat.", "这个夜晚，怎么熬过去？": "How will you survive this night?", "缩进避风的泥坑，一动不动": "Huddle in a sheltered mud pit, motionless", "省下体力，但要饿一整夜": "Save strength — but go hungry all night", "冒着寒风继续觅食": "Keep foraging in the icy wind", "赌一把——也许能找到吃的": "Gamble — maybe you will find food", "和同伴挤在一起取暖": "Huddle together with the flock", "大家靠在一起，风就小了": "Together, the wind feels smaller", "你把喙埋进背羽，缩成一团。": "You tuck your bill into your back feathers and curl up.", "寒风刮了一整夜，你终于撑到了天亮。": "The icy wind howls all night; you make it to dawn.", "风很大，但退潮的泥坑里困住了不少小鱼。": "The wind is fierce, but stranded fish thrash in the tide pools.", "这顿冒险的饭，吃得值。": "This risky meal was worth it.", "风太大了，你几次下喙都被吹歪。": "The wind is too strong; your bill is blown aside again and again.", "不仅没吃到什么，还耗掉了体力。": "You catch little and lose strength.", "十几只琵鹭挤在背风的泥滩上。": "A dozen spoonbills huddle on the sheltered mud.", "彼此的体温，撑过了最冷的时刻。": "Each other’s warmth carries you through the coldest hour.", "这只黑脸琵鹭的旅程，在这里结束了。": "The journey of this Black-faced Spoonbill ends here.", "它没能等到春天，": "It never saw the spring,", "没能飞回北方的繁殖地，": "never flew back to its northern breeding grounds,", "没能延续自己的生命。": "never passed on its life.", "而导致这一切的，": "And what caused all this", "是几个月里，一些看似普通的小事……": "were months of seemingly ordinary little things…", "这些，都是你在人类视角中做出的选择。": "These were the choices you made in the human perspective.", "回到人类视角": "Back to the Human Perspective", "2025 年 3 月，春天。": "March 2025. Spring.", "你成功了。": "You made it.", "体力充沛，羽毛丰满。": "Strong, full-feathered.", "你和其他黑脸琵鹭一起，启程北归。": "Together with the other spoonbills, you set off north.", "8000 公里的旅程，你完成了一半。": "Half of the 8,000-kilometre journey is done.", "而这一切，要感谢深圳湾为你提供的——": "And all of this was made possible by what Shenzhen Bay gave you —", "安全的栖息地、充足的食物、较少的干扰。": "safe roosts, plenty of food, few disturbances.", "这些，都源于几个月里，": "All of it came from the kind choices", "许多普通人做出的善意选择。": "made by many ordinary people over these months.", "你活下来了——勉强。": "You survived — barely.", "这个冬天消耗了你太多，": "This winter took too much from you;", "北归的路上，每一步都更加艰难。": "every step of the journey north will be harder.", "不是所有的同伴都能撑到这里。": "Not all of your companions made it this far.", "你回头望了一眼深圳湾，": "You look back at Shenzhen Bay,", "振翅，向北飞去。": "spread your wings, and fly north.", "（在这段体验中，那只琵鹭": "(In this story, the spoonbill ", "成功越冬，北归繁殖": "made it through the winter and flew north", "没能熬过这个冬天": "did not survive the winter", "结局 A · 初心即善": "Ending A · Kind from the Start", "结局 B · 觉醒者": "Ending B · The Awakened", "结局 C · 犹豫者": "Ending C · The Hesitant", "结局 D · 未觉醒者": "Ending D · The Unmoved", "[NAME]，你做到了。": "[NAME], you did it.", "从一开始，你就选择了": "From the very beginning, you chose", "为黑脸琵鹭留出生存空间。": "to leave room for the Black-faced Spoonbill.", "即使在体验它们的痛苦之前，": "Even before experiencing their suffering,", "你就已经理解：": "you already understood:", "每一个微小的选择，都关乎其他生命的存续。": "every small choice bears on another life’s survival.", "这种同理心，非常珍贵。": "That empathy is precious.", "因为在现实中，": "In reality,", "并非所有人都有机会": "not everyone has the chance", "先变成一只琵鹭，再做决定。": "to become a spoonbill before deciding.", "你的选择，代表了一种可能：": "Your choices represent a possibility:", "普通人的日常，与荒野温柔共存。": "the everyday life of ordinary people, gently coexisting with the wild.", "展现了卓越的生态同理心": "showed outstanding ecological empathy", "[NAME]，你改变了。": "[NAME], you changed.", "第一次，你按照「平常的习惯」做选择，": "The first time, you chose by “habit”,", "那些选择看起来方便、省事、理所当然。": "choices that looked easy, convenient, obvious.", "但当你变成一只黑脸琵鹭，": "But when you became a Black-faced Spoonbill", "亲身体验那些选择带来的后果时，": "and felt their consequences first-hand,", "你明白了：": "you understood:", "每一件「无关紧要」的小事，": "every “trivial” little thing", "都可能是另一个生命的生死关头。": "may be a matter of life and death for another being.", "第二次，你做出了不同的选择。": "The second time, you chose differently.", "这就是同理心的力量。": "That is the power of empathy.", "现实中，我们无法真的变成琵鹭，": "In real life we cannot truly become spoonbills,", "但我们可以学会想象：": "but we can learn to imagine:", "「如果我是它，我需要什么？」": "“If I were it, what would I need?”", "你已经学会了这一点。": "You have learned that.", "完成了重要的认知转变": "completed a profound shift in understanding", "[NAME]，你开始改变了。": "[NAME], you began to change.", "第二次面对选择时，": "The second time,", "你改变了其中的 [X] 个决定。": "you changed [X] of your decisions.", "这意味着，你开始意识到": "It means you are beginning to see", "日常的小事，会汇聚成其他生命的命运。": "how small daily things gather into the fate of other lives.", "但改变从来不是容易的事。": "But change is never easy.", "它常常需要我们在": "It often asks us to weigh", "方便与责任、习惯与良知之间": "convenience against responsibility, habit against conscience.", "做出艰难的取舍。": "to make hard trade-offs.", "你已经迈出了第一步，": "You have taken the first step;", "接下来，还需要更多的勇气。": "what comes next takes more courage.", "记住琵鹭的视角，": "Remember the spoonbill’s view,", "记住那些你曾经历的困境。": "remember the hardships you lived through.", "开始了保护意识的觉醒": "began the awakening of conservation awareness", "[NAME]，这个结果让人担忧。": "[NAME], this result is worrying.", "即使亲身体验了黑脸琵鹭的困境，": "Even after living the spoonbill’s plight first-hand,", "你依然选择了同样的做法。": "you still chose the same way.", "或许你认为：": "Perhaps you believe", "便利更重要，": "convenience matters more,", "个人的小事无关紧要。": "that one person’s small acts are insignificant.", "但请记住：": "But remember:", "2025 年，全球只剩 7,081 只黑脸琵鹭。": "In 2025, only 7,081 Black-faced Spoonbills remain on Earth.", "每一只的生存，都依赖普通人的善意。": "Each one’s survival depends on the kindness of ordinary people.", "当最后一只琵鹭消失时，": "When the last spoonbill disappears,", "失去的不只是一个物种，": "we lose more than a species —", "还有我们与自然共存的可能。": "we lose the possibility of living alongside nature.", "这个故事还没有结束，": "This story is not over.", "你随时可以重新选择。": "You can always choose again.", "了解了生态保护的重要性": "learned why conservation matters"};
+const EN_KEYS=Object.keys(EN_DICT).sort((a,b)=>b.length-a.length);
+const T=s=>(LANGV==='en'&&EN_DICT[s])?EN_DICT[s]:s;
+const _hasZH=s=>/[\u4e00-\u9fff]/.test(s);
+function _trLine(l){
+  if(!_hasZH(l)) return l;
+  if(EN_DICT[l]) return EN_DICT[l];
+  let out=l;
+  for(const k of EN_KEYS){ if(out.indexOf(k)>=0) out=out.split(k).join(EN_DICT[k]); }
+  return out;
+}
+function _trTextNode(n){
+  if(!n||n.nodeType!==3||!_hasZH(n.nodeValue)) return;
+  const v=n.nodeValue.split('\n').map(_trLine).join('\n');
+  if(v!==n.nodeValue) n.nodeValue=v;
+}
+function translateTree(root){
+  if(!root) return;
+  if(root.nodeType===3){ _trTextNode(root); return; }
+  const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);
+  let n; while(n=w.nextNode()) _trTextNode(n);
+}
+new MutationObserver(ms=>{ if(LANGV!=='en') return;
+  ms.forEach(m=>{
+    m.addedNodes.forEach(n=>translateTree(n));
+    if(m.type==='characterData') _trTextNode(m.target);
+  });
+}).observe(document.body,{childList:true,subtree:true,characterData:true});
+function applyLangUI(){
+  document.title = LANGV==='en' ? 'If I Were It · Shenzhen Bay Black-faced Spoonbill' : '如果我是它 · 深圳湾黑脸琵鹭互动科普';
+  $('lang-btn').textContent = LANGV==='en' ? '中文' : 'EN';
+  $('name-input').placeholder = T('请输入你的姓名');
+  if(LANGV==='en') translateTree(document.body);
+}
+$('lang-btn').onclick=()=>{
+  LANGV = LANGV==='zh' ? 'en' : 'zh';
+  try{ localStorage.setItem('swb_lang',LANGV); }catch(e){}
+  if(LANGV==='zh'){ location.reload(); return; }
+  applyLangUI();
+};
+
 /* 启动 */
 goHome();
+if(LANGV==='en') applyLangUI();
 </script>
 </body>
 </html>
