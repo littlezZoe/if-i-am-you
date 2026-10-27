@@ -1727,7 +1727,7 @@ $('btn-download').onclick=()=>{
 };
 $('btn-share').onclick=async ()=>{
   const text = LANGV==='en'
-    ? `I experienced both perspectives in "If I Were You" (${T(ENDINGS[S._ending].tag)}) and earned the Shenzhen Bay Mangrove Ecology Certificate. Only 7,081 Black-faced Spoonbills remain worldwide in 2025 — if I were it, what would I need?`
+    ? `I experienced both perspectives in "If I Were You" (${T(ENDINGS[S._ending].tag)}) and earned the Shenzhen Bay Mangrove Ecology Certificate. Only 7,081 Black-faced Spoonbills remain worldwide in 2025 — if I were you, what would I need?`
     : `我在《如果我是你——红树林 × 黑脸琵鹭》互动科普中完成了人类与黑脸琵鹭的双视角体验（${ENDINGS[S._ending].tag.split('·')[1].trim()}），获得了深圳湾红树林生态学习证书。2025年，全球只剩 7,081 只黑脸琵鹭——如果我是你，我需要什么？`;
   try{
     if(navigator.share){ await navigator.share({title:'深圳湾红树林生态学习证书', text}); }
