@@ -63,9 +63,9 @@
     text-align:center;max-width:540px;color:var(--ink-soft);
     margin:22px 0 8px;white-space:pre-line;
   }
-  .opts{display:flex;gap:16px;width:100%;max-width:640px;margin-top:18px}
+  .opts{display:flex;flex-wrap:wrap;justify-content:center;gap:16px;width:100%;max-width:640px;margin-top:18px}
   .opt{
-    flex:1;background:#fffdf8;border:1.5px solid var(--line);
+    flex:0 0 calc(50% - 9px);background:#fffdf8;border:1.5px solid var(--line);
     padding:16px 16px;cursor:pointer;text-align:left;font-family:inherit;color:var(--ink);
     transition:border-color .25s,transform .25s,box-shadow .25s;
     display:flex;flex-direction:column;gap:10px;opacity:0;transform:translateY(16px);
@@ -80,7 +80,6 @@
     padding-top:8px;display:none}
   .opt.mine .prev{display:block}
   .opt.mine{border-color:var(--teal)}
-  @media (max-width:560px){.opts{flex-direction:column}}
   /* 反应 */
   #d-react{display:none;width:100%;max-width:560px;text-align:center}
   #d-react.on{display:block;animation:fadein .7s ease both}
@@ -138,7 +137,7 @@
   .wave{stroke-dasharray:26 10;animation:wavemove 6s linear infinite}
   @keyframes wavemove{to{stroke-dashoffset:-72}}
   .flyin{animation:flyin 2s cubic-bezier(.3,.7,.4,1) both}
-  @keyframes flyin{from{transform:translate(340px,-40px)}to{transform:translate(0,0)}}
+  @keyframes flyin{from{transform:translate(-340px,-40px)}to{transform:translate(0,0)}}
   .flyaway{animation:flyaway 2.2s ease-in both}
   @keyframes flyaway{from{transform:translate(0,0)}to{transform:translate(240px,-90px);opacity:.15}}
   .startle{animation:startle 1.8s ease-in both}
@@ -402,7 +401,7 @@ function birdStanding(){ return `
 </g>`;}
 
 function birdFlying(){ return `
-<g class="drift">
+<g>
   <g transform="translate(190,95)">
     <path class="wing" d="M-6 -2 C6 -38 44 -58 86 -54 C64 -26 24 -6 -4 0 Z" fill="${C.wing}" stroke="${C.ink}" stroke-width="2"/>
     <path class="wing-b" d="M-2 0 C10 -24 40 -38 72 -38 C54 -16 24 0 0 4 Z" fill="${C.white}" stroke="${C.ink}" stroke-width="1.6"/>
@@ -465,12 +464,12 @@ const ART = {
     <rect x="150" y="110" width="90" height="80" fill="#e8e2d2" stroke="${C.greyD}" stroke-width="2"/>
     <rect x="150" y="110" width="90" height="26" fill="${C.roof}" opacity=".8"/>
     <path d="M150 190 L360 190" stroke="${C.greyD}" stroke-width="2.5"/>
-    <g transform="translate(60,58)"><g class="drift">${birdFlying()}</g></g>
+    <g transform="translate(60,58)"><g class="bob">${birdFlying()}</g></g>
   </svg>`;},
   brief2(){ return `<svg viewBox="0 0 400 220">
     <rect x="0" y="0" width="400" height="130" fill="${C.dusk}"/>
     ${waterBand(130, C.deep)}
-    <g transform="translate(-10,-10)"><g class="drift">${birdFlying()}</g></g>
+    <g transform="translate(-10,-10)"><g class="bob">${birdFlying()}</g></g>
   </svg>`;},
   brief3(){ return `<svg viewBox="0 0 400 220">
     <rect x="0" y="0" width="400" height="220" fill="#eef2ea"/>
@@ -621,7 +620,7 @@ const ART = {
     <rect x="0" y="0" width="400" height="130" fill="${C.dawn}"/>
     <circle cx="80" cy="46" r="22" fill="#f4d9a8"/>
     ${waterBand(130, C.deep)}
-    <g transform="translate(-16,-16)"><g class="drift">${birdFlying()}</g></g>
+    <g transform="translate(-16,-16)"><g class="bob">${birdFlying()}</g></g>
     <path d="M250 40 q11 -10 22 0 M290 60 q9 -8 18 0" stroke="${C.ink}" stroke-width="1.6" fill="none" opacity=".6"/>
   </svg>`;},
   lostRoost(){ return `<svg viewBox="0 0 400 220">
@@ -698,7 +697,7 @@ const ART = {
     <circle cx="322" cy="42" r="20" fill="#f4e3b8"/>
     ${waterBand(140, C.water)}
     ${mangrove(40,140,1)} ${mangrove(310,142,.85)}
-    <g transform="translate(-10,-24)"><g class="drift">${birdFlying()}</g></g>
+    <g transform="translate(-10,-24)"><g class="bob">${birdFlying()}</g></g>
     <path d="M80 52 q11 -10 22 0 M140 42 q10 -9 20 0 M250 38 q10 -9 20 0" stroke="${C.ink}" stroke-width="1.6" fill="none" opacity=".7"/>
   </svg>`;},
   nightSil(){ return `<svg viewBox="0 0 400 220">
@@ -727,7 +726,7 @@ const ART = {
     </linearGradient></defs>
     <rect x="0" y="0" width="400" height="220" fill="url(#gd)"/>
     <rect x="0" y="176" width="400" height="44" fill="#8fa8a4" opacity=".5"/>
-    <g transform="translate(-20,-14)"><g class="drift">${birdFlying()}</g></g>
+    <g transform="translate(-20,-14)"><g class="bob">${birdFlying()}</g></g>
     <path d="M200 16 L200 200 M200 16 L186 32 M200 16 L214 32" stroke="#fdfdf7" stroke-width="1.5" opacity=".6"/>
     <path d="M120 60 q11 -10 22 0 M280 44 q10 -9 20 0" stroke="#fdfdf7" stroke-width="1.6" fill="none" opacity=".5"/>
   </svg>`;},
@@ -735,7 +734,7 @@ const ART = {
     <rect x="0" y="0" width="400" height="220" fill="#c9cdc9"/>
     <rect x="0" y="176" width="400" height="44" fill="#9aa39b"/>
     <path d="M60 26 L48 58 M120 18 L108 50 M190 28 L178 60 M260 16 L248 48 M330 30 L318 62 M40 80 L28 112 M370 76 L358 108" stroke="#8b958f" stroke-width="2"/>
-    <g transform="translate(-10,-8)"><g class="drift">${birdFlying()}</g></g>
+    <g transform="translate(-10,-8)"><g class="bob">${birdFlying()}</g></g>
     <path d="M30 190 q40 -8 80 -2 q50 6 100 -2 q60 -8 120 0" stroke="#7c857d" stroke-width="1.6" fill="none" opacity=".7"/>
   </svg>`;},
   darkEnd(){ return `<svg viewBox="0 0 400 220">
