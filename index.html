@@ -1,0 +1,1251 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-page-node-id="Mp47iyfxkBzglOVioVhK8m">
+<head data-page-node-id="DmPP7aHaHOAvkaLduX2vr1">
+<meta charset="UTF-8" data-page-node-id="JiA4ijK0BZ65v3J8ShJm7S">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" data-page-node-id="UglrYDPfGRNBCKFjQ8nhD4">
+<title>如果我是它 · 深圳湾黑脸琵鹭互动科普</title>
+<style>
+  :root{
+    --ink:#2f2f2c;
+    --ink-soft:#77766e;
+    --paper:#f7f5ee;
+    --line:#d4d1c4;
+    --danger:#b3402e;
+    --teal:#5f9ea0;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:"Songti SC","STSong","Noto Serif SC","SimSun",serif;
+    line-height:1.9;
+    overflow-x:hidden;
+  }
+  #stage{min-height:100vh;display:flex;justify-content:center}
+  .screen{
+    display:none;width:100%;max-width:720px;
+    padding:48px 28px 80px;
+    flex-direction:column;align-items:center;
+  }
+  .screen.active{display:flex;animation:fadein .9s ease both}
+  @keyframes fadein{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+  .kicker{font-size:13px;letter-spacing:.5em;color:var(--ink-soft);margin-bottom:18px}
+  h1{font-size:34px;font-weight:600;letter-spacing:.12em;text-align:center;margin-bottom:8px}
+  h2{font-size:26px;font-weight:600;letter-spacing:.1em;text-align:center;margin-bottom:20px}
+  .poem{text-align:center;font-size:17px;margin:26px 0;white-space:pre-line}
+  .poem.dim{color:var(--ink-soft)}
+  .scene-art{width:100%;max-width:560px;margin:10px auto 24px}
+  .scene-art svg{width:100%;height:auto;display:block;border-radius:14px}
+  /* 按钮 */
+  .btn{
+    font-family:inherit;font-size:16px;letter-spacing:.3em;text-indent:.3em;
+    background:none;border:1.5px solid var(--ink);color:var(--ink);
+    padding:12px 34px;cursor:pointer;margin:8px 6px 0;
+    transition:background .25s,color .25s;
+  }
+  .btn:hover{background:var(--ink);color:var(--paper)}
+  .btn.small{font-size:14px;padding:9px 24px}
+  .btn-row{display:flex;flex-wrap:wrap;justify-content:center;margin-top:26px}
+  /* 输入 */
+  .name-input{
+    font-family:inherit;font-size:20px;text-align:center;letter-spacing:.15em;
+    background:none;border:none;border-bottom:1.5px solid var(--ink);
+    width:240px;padding:8px 4px;margin:30px 0 6px;color:var(--ink);outline:none;
+  }
+  .name-input::placeholder{color:var(--line)}
+  .input-note{font-size:13px;color:var(--ink-soft);margin-bottom:18px}
+  /* ============ 决策舞台 ============ */
+  #d-stage{width:100%;max-width:560px;border-radius:14px;overflow:hidden;
+    box-shadow:0 2px 14px rgba(60,60,50,.10);position:relative}
+  #d-stage svg{width:100%;height:auto;display:block}
+  .decision-desc{
+    text-align:center;max-width:540px;color:var(--ink-soft);
+    margin:22px 0 8px;white-space:pre-line;
+  }
+  .opts{display:flex;gap:16px;width:100%;max-width:640px;margin-top:18px}
+  .opt{
+    flex:1;background:#fffdf8;border:1.5px solid var(--line);
+    padding:16px 16px;cursor:pointer;text-align:left;font-family:inherit;color:var(--ink);
+    transition:border-color .25s,transform .25s,box-shadow .25s;
+    display:flex;flex-direction:column;gap:10px;opacity:0;transform:translateY(16px);
+  }
+  .opt.show{animation:optin .55s ease forwards}
+  @keyframes optin{to{opacity:1;transform:none}}
+  .opt:hover{border-color:var(--teal);transform:translateY(-3px);box-shadow:0 6px 16px rgba(60,90,90,.12)}
+  .opt svg{width:100%;height:auto;border-radius:8px}
+  .opt .t{font-size:17px;letter-spacing:.05em}
+  .opt .s{font-size:13px;color:var(--ink-soft);line-height:1.6}
+  .opt .prev{font-size:12px;color:var(--ink-soft);border-top:1px dashed var(--line);
+    padding-top:8px;display:none}
+  .opt.mine .prev{display:block}
+  .opt.mine{border-color:var(--teal)}
+  @media (max-width:560px){.opts{flex-direction:column}}
+  /* 反应 */
+  #d-react{display:none;width:100%;max-width:560px;text-align:center}
+  #d-react.on{display:block;animation:fadein .7s ease both}
+  #d-react .rline{font-size:17px;margin-top:16px;white-space:pre-line}
+  #d-react .rnote{font-size:13px;color:var(--ink-soft);margin-top:8px;letter-spacing:.2em}
+  .hint2{
+    display:none;margin-top:20px;font-size:14px;color:var(--ink-soft);
+    max-width:520px;text-align:center;border-top:1px dashed var(--line);padding-top:14px;
+    white-space:pre-line;
+  }
+  .hint2.show{display:block;animation:fadein .8s both}
+  /* ============ HUD ============ */
+  #hud{position:fixed;top:0;left:0;right:0;z-index:50;display:none;
+    justify-content:space-between;align-items:flex-start;
+    padding:14px 20px;pointer-events:none}
+  #hud.on{display:flex}
+  .hud-box{background:var(--paper);border:1.5px solid var(--ink);
+    padding:8px 14px;font-size:13px;letter-spacing:.1em}
+  #hpbarwrap{width:150px}
+  #hpbar{height:8px;border:1.5px solid var(--ink);margin-top:5px;position:relative}
+  #hpfill{position:absolute;inset:1px auto 1px 1px;width:60%;
+    background:var(--teal);transition:width .8s ease,background .5s}
+  #safety-icon{font-size:15px;margin-right:6px}
+  .danger-text{color:var(--danger)}
+  /* 事件 */
+  .event-lines{text-align:center;max-width:560px;white-space:pre-line;font-size:17px}
+  .event-lines .fx{color:var(--ink-soft);font-size:14px;margin-top:14px}
+  .event-lines .bad{color:var(--danger)}
+  /* 结局 */
+  .ending-tag{font-size:13px;letter-spacing:.6em;text-indent:.6em;color:var(--ink-soft);
+    border:1px solid var(--line);padding:6px 18px;margin-bottom:22px}
+  .silhouettes{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:26px 0 10px}
+  .silhouettes svg{width:88px;height:auto;opacity:.85}
+  .coming{font-size:13px;letter-spacing:.5em;text-indent:.5em;color:var(--ink-soft);margin-top:8px}
+  /* 证书 */
+  #certCanvas{width:100%;max-width:560px;border:1px solid var(--line);
+    margin:10px 0 6px;background:#fff}
+  /* 首页 */
+  .cert-badge{font-size:13px;letter-spacing:.3em;color:var(--ink-soft);
+    border:1px dashed var(--line);padding:6px 16px;margin:10px 0 20px}
+  /* Toast */
+  #toast{position:fixed;bottom:36px;left:50%;transform:translateX(-50%) translateY(20px);
+    background:var(--ink);color:var(--paper);font-size:14px;letter-spacing:.15em;
+    padding:10px 26px;opacity:0;transition:all .4s;z-index:99;pointer-events:none}
+  #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  /* ============ 动画 ============ */
+  .wing{transform-origin:0px -2px;animation:flap 1s ease-in-out infinite}
+  .wing-b{transform-origin:2px 0px;animation:flapB 1s ease-in-out infinite}
+  @keyframes flap{0%,100%{transform:rotate(0deg)}50%{transform:rotate(-16deg)}}
+  @keyframes flapB{0%,100%{transform:rotate(3deg)}50%{transform:rotate(-9deg)}}
+  .drift{animation:drift 9s ease-in-out infinite alternate}
+  @keyframes drift{from{transform:translateX(-16px)}to{transform:translateX(26px)}}
+  .bob{animation:bob 3.4s ease-in-out infinite}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+  .wave{stroke-dasharray:26 10;animation:wavemove 6s linear infinite}
+  @keyframes wavemove{to{stroke-dashoffset:-72}}
+  .flyin{animation:flyin 2s cubic-bezier(.3,.7,.4,1) both}
+  @keyframes flyin{from{transform:translate(340px,-40px)}to{transform:translate(0,0)}}
+  .flyaway{animation:flyaway 2.2s ease-in both}
+  @keyframes flyaway{from{transform:translate(0,0)}to{transform:translate(240px,-90px);opacity:.15}}
+  .startle{animation:startle 1.8s ease-in both}
+  @keyframes startle{0%{transform:translate(0,0)}18%{transform:translate(-8px,-26px)}55%{transform:translate(120px,-70px)}100%{transform:translate(280px,-120px);opacity:.1}}
+  .fadein2{animation:fadein 1.6s ease both}
+  .timerbar{height:4px;background:var(--line);margin:16px 0;position:relative;overflow:hidden}
+  .timerbar i{position:absolute;inset:0;background:var(--ink);transform-origin:left}
+  .minigame-btn{
+    font-family:inherit;font-size:16px;letter-spacing:.25em;text-indent:.25em;
+    border:1.5px solid var(--ink);background:none;color:var(--ink);
+    padding:10px 30px;cursor:pointer;margin-top:14px;transition:background .2s,color .2s;
+  }
+  .minigame-btn:active{background:var(--ink);color:var(--paper)}
+  .mg-log{margin-top:12px;font-size:14px;color:var(--ink-soft);min-height:24px;white-space:pre-line}
+</style>
+</head>
+<body data-page-node-id="x3VWut5oxqJOcEZ2CdxpF4">
+
+<div id="hud" data-page-node-id="Im5HgU2BLDGxUAcoaOCFdX">
+  <div class="hud-box" data-page-node-id="Ek4fqE7nJ2M3BzNFotFtld"><span id="safety-icon" data-page-node-id="fCp35ngDwD8jLyRhharyBK">○</span><span id="safety-label" data-page-node-id="RLDSNoOJ5s1ql6SSkaKEGN">平静</span> 安全度</div>
+  <div class="hud-box" id="hpbarwrap" data-page-node-id="0hULGnamcqcRkeyyCbGaHi">体力 <span id="hp-num" data-page-node-id="NtVj0RVM6BaCc4XDfwv8EP">60</span>/100<div id="hpbar" data-page-node-id="4jcvHrH2hZhb1KxMt07yR4"><div id="hpfill" data-page-node-id="lRKiiLawNIJtTCByAzEhHI"></div></div></div>
+</div>
+
+<main id="stage" data-page-node-id="aLzLAVbrr8QOeNv4ogUSBF">
+
+  <!-- 首页 -->
+  <section class="screen" id="s-home" data-page-node-id="axy5ztGBKvOWz24pP5znCP">
+    <p class="kicker" data-page-node-id="4n5hbuhOSK9ZIZDqlYgja0">深圳湾 · 红树林</p>
+    <div class="scene-art" id="home-art" data-page-node-id="xGmPiGHYgakID50hLl0tF7"></div>
+    <h1 data-page-node-id="tjtHC3UbYGnzzXb0w8Gu3c">如果我是它</h1>
+    <p class="poem dim" id="home-welcome" data-page-node-id="KQfKzh9lhxCWWD6Om0dwSS"></p>
+    <div class="cert-badge" id="home-badge" data-page-node-id="xxgyA5mFYVbPnbnkYTKJDv">你已获得学习证书</div>
+    <div class="btn-row" data-page-node-id="tkbe9CPIdF02F9pMuCmp1r">
+      <button class="btn" id="btn-replay" data-page-node-id="oSdHHOXSPUC4iljrbA9skQ">重新体验</button>
+      <button class="btn" id="btn-view-cert" data-page-node-id="l46tbYvytCLKO3RAxfkUpX">查看证书</button>
+    </div>
+  </section>
+
+  <!-- 开场 -->
+  <section class="screen" id="s-intro" data-page-node-id="7WDlOGZXNouHUD6EixcO3G">
+    <p class="kicker" data-page-node-id="o4QSYR8pHnS7zf6r7GYGFC">如果我是它 · 同理心旅程</p>
+    <div class="scene-art" id="intro-art" data-page-node-id="dphqOTlZfiPxsFuXBwEFmf"></div>
+    <h1 data-page-node-id="JIlwKdRv3rtX0SfgH5FAp4">欢迎来到深圳湾红树林</h1>
+    <p class="poem" data-page-node-id="DhfeTe2lwjcofgWxWwaxfM">这里是全球 4.6% 黑脸琵鹭的越冬家园
+每年有近 10 万只候鸟在此停歇</p>
+    <p class="poem dim" data-page-node-id="gvMNUqDxFo0GCToV6orfPz">在这个互动故事中，你将体验两种截然不同的视角：
+普通人的日常选择，与一只琵鹭的命运</p>
+    <input class="name-input" id="name-input" maxlength="12" placeholder="请输入你的姓名" data-page-node-id="Z0q7fOHKCPjKlq0H6EGxBo">
+    <p class="input-note" data-page-node-id="5ggtOD1D4ORCiaBJqc3MLy">你的姓名将用于完成证书，我们会妥善保管你的个人信息</p>
+    <button class="btn" id="btn-start" data-page-node-id="YZNY02Hc6Eq1UpNEFe1aJ1">开始旅程</button>
+  </section>
+
+  <!-- 第一部分引导 -->
+  <section class="screen" id="s-brief1" data-page-node-id="Brm3Toh2N22QGAdcdQogxG">
+    <p class="kicker" data-page-node-id="dAcE7JQKx1xvCvhKPjloD6">第一部分</p>
+    <h2 data-page-node-id="DYF9anZGCbDVZOFwlr0lIU">人类视角</h2>
+    <div class="scene-art" id="brief1-art" data-page-node-id="EuEVn2XeEGAlihQtWHdmty"></div>
+    <p class="poem" data-page-node-id="sw4COpLkfrISE6DMqtKGRu">你好，<span id="brief1-name" data-page-node-id="lkAjyIvjBGRiol7sjumwoD"></span>
+现在，让我们开始这段旅程。</p>
+    <p class="poem dim" data-page-node-id="sxnMbSZzGAOre7QrwZfzyX">你只是一位普通的深圳市民。
+接下来是 5 个平常日子里的选择——
+它们看起来都很小，
+但每一件，都可能悄悄改变一只黑脸琵鹭的一生。
+没有标准答案，跟随你的直觉就好。</p>
+    <div class="btn-row" data-page-node-id="SmuYATx0MlAaErnHrCjiSN"><button class="btn" id="btn-brief1" data-page-node-id="LSKmTbK1tWpAyWC8F0lM9K">进入今天的生活</button></div>
+  </section>
+
+  <!-- 决策页 -->
+  <section class="screen" id="s-decision" data-page-node-id="Eb0CeejpD1tHa68xtL93cx">
+    <p class="kicker" id="d-kicker" data-page-node-id="lmtbF3POsObxvxjJNBoboh">决策 1 / 5</p>
+    <h2 id="d-title" data-page-node-id="Inb8CyYdo0tzpK2AOim8k7"></h2>
+    <div id="d-stage" data-page-node-id="bv8lFntITQ1XSznA7m7an6"></div>
+    <p class="decision-desc" id="d-desc" data-page-node-id="Jx1HoWsJUcHXh5pVwtas3e"></p>
+    <div class="opts" id="d-opts" data-page-node-id="rqPiHUglkQam6gMMEnSAOM"></div>
+    <div id="d-react" data-page-node-id="WdbyNDVJeEJe0n13tYQbQj">
+      <div id="d-react-art" class="scene-art" data-page-node-id="sgwoNkfpVjaaPQlELzL2Rx"></div>
+      <div class="rline" id="d-react-line" data-page-node-id="3CBWSwP4QCubTSxN56O3Jy"></div>
+      <div class="rnote" id="d-react-note" data-page-node-id="5Li2YgAJN4ILuaNMBYK1YL"></div>
+    </div>
+    <div class="hint2" id="d-hint" data-page-node-id="bnTWusT9AZOAiEF7edWiw4"></div>
+  </section>
+
+  <!-- 第二部分引导 -->
+  <section class="screen" id="s-brief2" data-page-node-id="ynrFT1TyVg1RSI5eQ8ohRi">
+    <p class="kicker" data-page-node-id="CdlGbBwg6sRviHRCtlSqZ3">第二部分</p>
+    <h2 data-page-node-id="PdvA5wZZlroGQcqKgD7EcJ">黑脸琵鹭视角</h2>
+    <div class="scene-art" id="brief2-art" data-page-node-id="Wgoz1knLWwQ7z8d3GEBsXT"></div>
+    <p class="poem" data-page-node-id="RBlq52f1YQMZuAMhIS707u">你的 5 个选择已完成。
+现在，让我们看看这些平常的小事，
+对另一只生命的整个冬天意味着什么……</p>
+    <div class="btn-row" data-page-node-id="cewIFNB9vRGkE9X1YJ5hXa"><button class="btn" id="btn-brief2" data-page-node-id="0d9P2zHuV6VjhxvWRGPIJ7">化身琵鹭</button></div>
+  </section>
+
+  <!-- 琵鹭事件页 -->
+  <section class="screen" id="s-event" data-page-node-id="WTdoMfxN2a70dEWeCaT4kS">
+    <div class="scene-art" id="event-art" data-page-node-id="ibjXYdVZm7LRWlo9QEJjtB"></div>
+    <div class="event-lines" id="event-lines" data-page-node-id="f7zcF3bQeuyFfsLj7OBZXE"></div>
+    <div id="event-extra" style="width:100%;max-width:560px;text-align:center" data-page-node-id="VRzhPDmCLdXGdjPpcFos5h"></div>
+    <div class="btn-row" id="event-actions" data-page-node-id="tyJ2bGttfq64ffE5Vas2De"></div>
+  </section>
+
+  <!-- 第三部分引导 -->
+  <section class="screen" id="s-brief3" data-page-node-id="Xc4f8BIVWzOJXmF8IOEZds">
+    <p class="kicker" data-page-node-id="AE4cMSrWQCmzFEdVV3qQvZ">第三部分</p>
+    <h2 data-page-node-id="xH34XQEV6fyVI5AdJAG0yu">人类视角 · 反思</h2>
+    <div class="scene-art" id="brief3-art" data-page-node-id="QhKJShVBZlbLSUdKFPUlwZ"></div>
+    <p class="poem" data-page-node-id="bo83tFoTUSwERhlMcxJ8XN">现在，让我们回到人类视角。
+你刚刚亲身体验了自己的选择，
+对一只琵鹭的影响。</p>
+    <p class="poem dim" data-page-node-id="0uEzB0qG3rtDfRAcLo8Vc3">如果重新来过，
+你会做出不同的决定吗？</p>
+    <div class="btn-row" data-page-node-id="0rKi8KNvGrm7VhblydM3ux"><button class="btn" id="btn-brief3" data-page-node-id="aoBcvBBDrETIOILyLxpuvm">重新选择</button></div>
+  </section>
+
+  <!-- 结局页 -->
+  <section class="screen" id="s-ending" data-page-node-id="ZCyxHJdEtcNUXBExQnOfQf">
+    <p class="kicker" data-page-node-id="HWCkFsTUOUwD0ebGLPuPnH">第四部分 · 结局</p>
+    <div class="ending-tag" id="ending-tag" data-page-node-id="vQ628m346orJi7mBdK4HC8"></div>
+    <div class="scene-art" id="ending-art" data-page-node-id="Urg7cjSv9kE5CLH2LcjKuF"></div>
+    <p class="poem" id="ending-text" data-page-node-id="G1uafHS5VCfkum4nXNVZHF"></p>
+    <div class="silhouettes" id="silhouettes" data-page-node-id="0P5XcZzIAhPC05yWHKJ7qT"></div>
+    <p class="coming" data-page-node-id="CjkMOhUjbTYZ0Vg1LEepeA">COMING SOON · 深圳红树林生物系列 · 敬请期待</p>
+    <div class="btn-row" data-page-node-id="DnTRJDG7PAo48Kh7su2vi9"><button class="btn" id="btn-to-cert" data-page-node-id="hcJqHix6btTglCMplR5IAq">领取证书</button></div>
+  </section>
+
+  <!-- 证书页 -->
+  <section class="screen" id="s-cert" data-page-node-id="eJ1fO5241Zv4yYObDqAVCa">
+    <p class="kicker" data-page-node-id="p2W3rFXaAIhVd29NqM9kMZ">第五部分</p>
+    <h2 data-page-node-id="vxwjHtehDeW4Wx3xDK6dog">深圳湾红树林生态学习证书</h2>
+    <canvas id="certCanvas" width="1400" height="990" data-page-node-id="vlUko6knQ4Hos0BzMbSAre"></canvas>
+    <div class="btn-row" data-page-node-id="ELAGuXAvuepMQC08FNRZNW">
+      <button class="btn small" id="btn-download" data-page-node-id="mp3PC6fbAErgeKM1RJCbYY">下载证书</button>
+      <button class="btn small" id="btn-share" data-page-node-id="YhCB3AuM9L6cQocMHAcDkL">分享证书</button>
+      <button class="btn small" id="btn-home" data-page-node-id="IXb2Iv1tG6GlFGojvlBMcB">返回首页</button>
+    </div>
+  </section>
+
+</main>
+
+<div id="toast" data-page-node-id="D5kBCZze43jwNGNhrpgnZR"></div>
+
+<script>
+/* =========================================================
+   数据
+========================================================= */
+const DECISIONS = [
+  {
+    title:"周末的鱼塘",
+    desc:"你小区旁边那片老鱼塘地块要改造了，社区议事会正在征求居民意见。",
+    opts:[
+      {t:"建成商业综合体", s:"更多店铺、更热闹，周末有地方逛", good:false, art:"cBuild"},
+      {t:"保留成生态鱼塘公园", s:"留下水面和滩涂，少一点喧嚣", good:true, art:"cPond"}
+    ],
+    hint:"琵鹭视角中——\n那次表决之后，它连夜离开了消失的夜栖地。",
+    react:{
+      bad:{art:"lostRoost", line:"塔吊的灯亮了一整夜。\n它连夜飞走，去找新的落脚点。"},
+      good:{art:"safeRoost", line:"夜里，它有了一个安静的落脚点。"}
+    }
+  },
+  {
+    title:"周末去湾边",
+    desc:"难得的好天气，你去深圳湾看鸟。滩涂上正落着一群黑脸琵鹭。",
+    opts:[
+      {t:"翻过围栏走近拍照", s:"能拍到更清楚的照片", good:false, art:"cTourists"},
+      {t:"在观鸟屋安静观察", s:"隔开一段距离，用镜头拉远", good:true, art:"cHide"}
+    ],
+    hint:"琵鹭视角中——\n你走近的那一次，它吓得丢下满嘴的食物。",
+    react:{
+      bad:{art:"encounter", line:"太近了——扑棱！\n它被惊起，飞走了。"},
+      good:{art:"forageClean", line:"隔着围栏，它低头觅食，没有被打扰。"}
+    }
+  },
+  {
+    title:"滩涂上的渔网",
+    desc:"傍晚散步，你在滩涂边看到一张被丢弃的废渔网，半浸在水里。",
+    opts:[
+      {t:"与我无关，走开", s:"反正会有专人处理", good:false, art:"cNet"},
+      {t:"拍照上报回收志愿者", s:"顺手的事，一分钟就好", good:true, art:"cReport"}
+    ],
+    hint:"琵鹭视角中——\n水下那团看不见的网，差点让它再也飞不起来。",
+    react:{
+      bad:{art:"netWater", line:"水很平静。\n水下的那张网，它看不见。"},
+      good:{art:"boatNet", line:"几天后，有人把那张网捞走了。"}
+    }
+  },
+  {
+    title:"大扫除的废水",
+    desc:"周末大扫除，家里攒下一桶换下来的清洁废水。",
+    opts:[
+      {t:"倒进路边雨水篦子", s:"最方便，反正没人看见", good:false, art:"cDrain"},
+      {t:"提到指定收集点", s:"多走十分钟，图个心安", good:true, art:"cDrop"}
+    ],
+    hint:"琵鹭视角中——\n那片滩涂的水变浑了，鱼越来越少。",
+    react:{
+      bad:{art:"forageMurky", line:"顺着雨水管，脏水进了海湾。\n它扫了一整天，喙里全是泥。"},
+      good:{art:"forageClean", line:"退潮后，滩涂里的鱼多得很。"}
+    }
+  },
+  {
+    title:"凌晨的邀请",
+    desc:"志愿者群里招募人手：下周清晨的黑脸琵鹭全球同步调查，要早起。",
+    opts:[
+      {t:"起不来，算了吧", s:"少我一个不影响什么", good:false, art:"cSleep"},
+      {t:"报名参加", s:"观鸟屋需要更多双眼睛", good:true, art:"cWatch"}
+    ],
+    hint:"琵鹭视角中——\n有人的地方，才有人为它说话。",
+    react:{
+      bad:{art:"nightSil", line:"那个清晨，观测记录少了一页。\n没有人数它。"},
+      good:{art:"watch", line:"那个清晨，有一双眼睛\n记下了关于它的每一个数字。"}
+    }
+  }
+];
+
+/* 结局文案 */
+const ENDINGS = {
+  A:{tag:"结局 A · 初心即善", art:"spring",
+    text:"[NAME]，你做到了。\n\n从一开始，你就选择了\n为黑脸琵鹭留出生存空间。\n即使在体验它们的痛苦之前，\n你就已经理解：\n每一个微小的选择，都关乎其他生命的存续。\n\n这种同理心，非常珍贵。\n因为在现实中，\n并非所有人都有机会\n先变成一只琵鹭，再做决定。\n\n你的选择，代表了一种可能：\n普通人的日常，与荒野温柔共存。",
+    comment:"展现了卓越的生态同理心"},
+  B:{tag:"结局 B · 觉醒者", art:"awaken",
+    text:"[NAME]，你改变了。\n\n第一次，你按照「平常的习惯」做选择，\n那些选择看起来方便、省事、理所当然。\n但当你变成一只黑脸琵鹭，\n亲身体验那些选择带来的后果时，\n你明白了：\n\n每一件「无关紧要」的小事，\n都可能是另一个生命的生死关头。\n\n第二次，你做出了不同的选择。\n这就是同理心的力量。\n\n现实中，我们无法真的变成琵鹭，\n但我们可以学会想象：\n「如果我是它，我需要什么？」\n\n你已经学会了这一点。",
+    comment:"完成了重要的认知转变"},
+  C:{tag:"结局 C · 犹豫者", art:"storm",
+    text:"[NAME]，你开始改变了。\n\n第二次面对选择时，\n你改变了其中的 [X] 个决定。\n这意味着，你开始意识到\n日常的小事，会汇聚成其他生命的命运。\n\n但改变从来不是容易的事。\n它常常需要我们在\n方便与责任、习惯与良知之间\n做出艰难的取舍。\n\n你已经迈出了第一步，\n接下来，还需要更多的勇气。\n\n记住琵鹭的视角，\n记住那些你曾经历的困境。",
+    comment:"开始了保护意识的觉醒"},
+  D:{tag:"结局 D · 未觉醒者", art:"darkEnd",
+    text:"[NAME]，这个结果让人担忧。\n\n即使亲身体验了黑脸琵鹭的困境，\n你依然选择了同样的做法。\n或许你认为：\n便利更重要，\n个人的小事无关紧要。\n\n但请记住：\n2025 年，全球只剩 7,081 只黑脸琵鹭。\n每一只的生存，都依赖普通人的善意。\n当最后一只琵鹭消失时，\n失去的不只是一个物种，\n还有我们与自然共存的可能。\n\n这个故事还没有结束，\n你随时可以重新选择。",
+    comment:"了解了生态保护的重要性"}
+};
+
+/* =========================================================
+   调色板
+========================================================= */
+const C = {
+  ink:'#2f2f2c',
+  white:'#fdfdf7', wing:'#f2f1e6',
+  bill:'#3b3b39', yellow:'#ecd27a',
+  sky:'#d9ebee', dawn:'#f7e3c8', dusk:'#ccdcea', night:'#3a4652',
+  water:'#c2dcd6', waterD:'#7fb0a8', deep:'#a7cdc6',
+  mud:'#ddd0b4', green:'#7fa786', greenD:'#5f8a68',
+  trunk:'#6b5d4f', grey:'#a9b2ae', greyD:'#8b958f', roof:'#c96f52', crane:'#d9a05b'
+};
+
+/* =========================================================
+   琵鹭（照真实形态绘制：白躯体、黑脸、黑色勺状长喙、
+   繁殖期颈胸黄羽、黑色长腿）
+========================================================= */
+function birdStanding(){ return `
+<g class="bob">
+  <path d="M112 148 L107 178 M131 146 L138 174" stroke="${C.ink}" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+  <path d="M100 179 L115 179 M131 175 L146 175" stroke="${C.ink}" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <path d="M66 120 C74 100 96 90 118 92 C140 94 156 102 163 111 L178 97 L168 116 C162 130 144 139 122 140 C100 141 76 136 66 120 Z" fill="${C.white}" stroke="${C.ink}" stroke-width="2"/>
+  <path d="M124 140 C126 152 122 163 118 177 M111 179 L126 179" stroke="${C.ink}" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+  <path d="M92 106 C108 120 134 125 156 114" stroke="${C.ink}" stroke-width="1.4" fill="none" opacity=".45"/>
+  <path d="M84 116 C74 100 72 84 78 68 C81 58 88 50 96 48" stroke="${C.ink}" stroke-width="15" fill="none" stroke-linecap="round"/>
+  <path d="M84 116 C74 100 72 84 78 68 C81 58 88 50 96 48" stroke="${C.white}" stroke-width="10.5" fill="none" stroke-linecap="round"/>
+  <path d="M80 104 C86 114 96 120 106 121 C98 127 86 123 78 114 C75 109 76 105 80 104 Z" fill="${C.yellow}"/>
+  <circle cx="100" cy="44" r="12" fill="${C.white}" stroke="${C.ink}" stroke-width="2"/>
+  <path d="M100 33 C92 35 87 41 87 47 C87 53 91 57 96 57 C100 57 103 53 103 47 Z" fill="${C.bill}"/>
+  <circle cx="95" cy="44" r="1.6" fill="${C.white}"/>
+  <path d="M94 51 C84 60 72 73 63 87 C57 92 51 97 46 102 C41 108 35 114 32 120 C25 127 24 134 31 137 C37 140 41 136 44 132 C49 126 54 120 58 114 C62 108 66 99 69 93 C78 80 90 64 98 55 C97 53 95 51 94 51 Z" fill="${C.bill}"/>
+</g>`;}
+
+function birdFlying(){ return `
+<g class="drift">
+  <g transform="translate(190,95)">
+    <path class="wing" d="M-6 -2 C6 -38 44 -58 86 -54 C64 -26 24 -6 -4 0 Z" fill="${C.wing}" stroke="${C.ink}" stroke-width="2"/>
+    <path class="wing-b" d="M-2 0 C10 -24 40 -38 72 -38 C54 -16 24 0 0 4 Z" fill="${C.white}" stroke="${C.ink}" stroke-width="1.6"/>
+    <path d="M-40 20 C-20 32 12 38 44 34 M-32 24 C-14 34 12 38 36 36" stroke="${C.ink}" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <path d="M-60 10 C-40 -6 0 -10 30 -2 C42 2 46 8 41 13 C22 24 -22 26 -46 18 C-56 15 -64 13 -60 10 Z" fill="${C.white}" stroke="${C.ink}" stroke-width="2"/>
+    <path d="M-58 12 L-78 20 L-54 23 Z" fill="${C.white}" stroke="${C.ink}" stroke-width="1.6"/>
+    <path d="M36 2 C48 -2 56 -8 60 -14" stroke="${C.ink}" stroke-width="11" fill="none" stroke-linecap="round"/>
+    <path d="M36 2 C48 -2 56 -8 60 -14" stroke="${C.white}" stroke-width="7" fill="none" stroke-linecap="round"/>
+    <circle cx="64" cy="-18" r="7.5" fill="${C.white}" stroke="${C.ink}" stroke-width="2"/>
+    <path d="M60 -27 C56 -25 54 -20 56 -16 C58 -13 62 -13 64 -16 C65 -21 63 -26 60 -27 Z" fill="${C.bill}"/>
+    <circle cx="59" cy="-20" r="1.3" fill="${C.white}"/>
+    <path d="M68 -23 C75 -24 82 -25 88 -25 C95 -25 103 -25 108 -22 C113 -19 113 -15 109 -13 C104 -11 97 -12 91 -15 C86 -17 81 -18 74 -19 C72 -19 70 -19 68 -20 Z" fill="${C.bill}"/>
+  </g>
+</g>`;}
+
+function birdSil(){ return `
+<g>
+  <path d="M150 122 C170 104 212 100 240 112 C250 116 254 123 249 129 C226 142 184 144 160 136 C150 132 146 128 150 122 Z" fill="#343e49"/>
+  <path d="M243 114 C252 110 257 102 259 94 C267 90 275 94 279 101 C273 110 262 116 252 116 Z" fill="#343e49"/>
+  <path d="M257 94 C270 89 286 92 297 100 C287 108 272 108 262 102 Z" fill="#343e49"/>
+  <path d="M170 140 C190 152 218 156 244 152 M180 144 C198 154 218 156 236 156" stroke="#343e49" stroke-width="3.2" fill="none" stroke-linecap="round"/>
+</g>`;}
+
+function birdsDistant(){ return `
+<g opacity=".8">
+  <path d="M120 66 q11 -10 22 0 M252 48 q10 -9 20 0 M304 84 q9 -8 18 0" stroke="${C.ink}" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+</g>`;}
+
+function waterBand(y, color){ return `
+<rect x="0" y="${y}" width="400" height="${220-y}" fill="${color}"/>
+<path class="wave" d="M10 ${y+16} q20 -7 40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0" stroke="${C.waterD}" stroke-width="1.6" fill="none"/>
+<path d="M20 ${y+34} q20 -7 40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0" stroke="${C.waterD}" stroke-width="1.2" fill="none" opacity=".6"/>`;}
+
+function mangrove(x, y, s){ return `
+<g transform="translate(${x},${y}) scale(${s})">
+  <circle cx="14" cy="-16" r="20" fill="${C.green}"/>
+  <circle cx="2" cy="-8" r="13" fill="${C.greenD}" opacity=".85"/>
+  <circle cx="28" cy="-8" r="12" fill="${C.greenD}" opacity=".7"/>
+  <path d="M14 2 L14 26" stroke="${C.trunk}" stroke-width="4" stroke-linecap="round"/>
+  <path d="M14 10 q-10 4 -12 16 M14 10 q10 4 12 16" stroke="${C.trunk}" stroke-width="2.5" fill="none"/>
+</g>`;}
+
+/* =========================================================
+   插画库
+========================================================= */
+const ART = {
+  intro(){ return `<svg viewBox="0 0 400 220">
+    <rect x="0" y="0" width="400" height="140" fill="${C.sky}"/>
+    <circle cx="330" cy="40" r="20" fill="#f4e3b8"/>
+    ${waterBand(140, C.water)}
+    ${mangrove(30,150,1.1)} ${mangrove(300,152,0.9)}
+    ${birdsDistant()}
+    <g transform="translate(-20,-26)"><g class="drift">${birdFlying()}</g></g>
+  </svg>`;},
+  home(){ return this.intro(); },
+  brief1(){ return `<svg viewBox="0 0 400 220">
+    <rect x="0" y="0" width="400" height="150" fill="#eef2ea"/>
+    <rect x="0" y="150" width="400" height="70" fill="${C.mud}"/>
+    <path d="M60 190 L60 120 M60 120 L130 120 M130 120 L130 190" stroke="${C.greyD}" stroke-width="3" fill="none"/>
+    <rect x="150" y="110" width="90" height="80" fill="#e8e2d2" stroke="${C.greyD}" stroke-width="2"/>
+    <rect x="150" y="110" width="90" height="26" fill="${C.roof}" opacity=".8"/>
+    <path d="M150 190 L360 190" stroke="${C.greyD}" stroke-width="2.5"/>
+    <g transform="translate(60,58)"><g class="drift">${birdFlying()}</g></g>
+  </svg>`;},
+  brief2(){ return `<svg viewBox="0 0 400 220">
+    <rect x="0" y="0" width="400" height="130" fill="${C.dusk}"/>
+    ${waterBand(130, C.deep)}
+    <g transform="translate(-10,-10)"><g class="drift">${birdFlying()}</g></g>
+  </svg>`;},
+  brief3(){ return `<svg viewBox="0 0 400 220">
+    <rect x="0" y="0" width="400" height="220" fill="#eef2ea"/>
+    <circle cx="200" cy="82" r="44" fill="none" stroke="${C.ink}" stroke-width="1.6"/>
+    <path d="M200 40 L200 16 M200 124 L200 148 M158 82 L134 82 M242 82 L266 82 M170 52 L154 36 M230 52 L246 36 M170 112 L154 128 M230 112 L246 128" stroke="${C.ink}" stroke-width="1.6"/>
+    <g transform="translate(90,84) scale(.8)">${birdStanding()}</g>
+  </svg>`;},
+
+  /* —— 决策选项小图 —— */
+  cBuild(){ return `<svg viewBox="0 0 160 110">
+    <rect x="0" y="0" width="160" height="110" fill="#efeae0"/>
+    <path d="M18 88 L142 88" stroke="${C.greyD}" stroke-width="2.5"/>
+    <rect x="24" y="50" width="26" height="38" fill="#d8d2c2" stroke="${C.greyD}" stroke-width="2"/>
+    <rect x="92" y="40" width="30" height="48" fill="#d8d2c2" stroke="${C.greyD}" stroke-width="2"/>
+    <rect x="56" y="66" width="30" height="22" fill="#cfc9b8" stroke="${C.greyD}" stroke-width="2"/>
+    <path d="M96 44 L116 44 M96 54 L116 54 M96 66 L116 66 M28 56 L46 56 M28 68 L46 68 M96 76 L116 76" stroke="${C.greyD}" stroke-width="1.5"/>
+    <path d="M120 40 L120 24 L136 24" stroke="${C.crane}" stroke-width="3" fill="none"/>
+  </svg>`;},
+  cPond(){ return `<svg viewBox="0 0 160 110">
+    <rect x="0" y="0" width="160" height="110" fill="#e4efe7"/>
+    <rect x="0" y="66" width="160" height="44" fill="${C.water}"/>
+    ${mangrove(14,66,.5)} ${mangrove(116,66,.45)}
+    <g transform="translate(52,8) scale(.48)">${birdStanding()}</g>
+    <path d="M20 92 q16 -5 32 0 t32 0 t32 0 t32 0" stroke="${C.waterD}" stroke-width="1.5" fill="none"/>
+  </svg>`;},
+  cTourists(){ return `<svg viewBox="0 0 160 110">
+    <rect x="0" y="0" width="160" height="110" fill="#e9e4d6"/>
+    <path d="M18 88 L142 88" stroke="${C.greyD}" stroke-width="2.5"/>
+    <circle cx="52" cy="32" r="8" fill="#e8b48f" stroke="${C.ink}" stroke-width="1.5"/>
+    <path d="M52 40 L52 66 M52 48 L40 58 M52 48 L64 58 M52 66 L44 88 M52 66 L60 88" stroke="${C.ink}" stroke-width="2" fill="none"/>
+    <path d="M44 44 L60 44 L58 58 L46 58 Z" fill="#c96f52"/>
+    <circle cx="86" cy="28" r="8" fill="#e8b48f" stroke="${C.ink}" stroke-width="1.5"/>
+    <path d="M86 36 L86 64 M86 44 L74 54 M86 44 L98 54 M86 64 L78 88 M86 64 L94 88" stroke="${C.ink}" stroke-width="2" fill="none"/>
+    <path d="M78 40 L94 40 L92 54 L80 54 Z" fill="#5f8a68"/>
+    <circle cx="116" cy="64" r="8" fill="#c9b18a" stroke="${C.ink}" stroke-width="1.5"/>
+    <path d="M116 72 L113 88 M116 72 L122 88 M124 62 q9 -4 9 4 q0 6 -9 4" stroke="${C.ink}" stroke-width="2" fill="none"/>
+  </svg>`;},
+  cHide(){ return `<svg viewBox="0 0 160 110">
+    <rect x="0" y="0" width="160" height="110" fill="#e4efe7"/>
+    <rect x="0" y="74" width="160" height="36" fill="${C.water}"/>
+    <path d="M30 74 L30 40 L84 40 L84 74" fill="#a8846a" stroke="${C.trunk}" stroke-width="2"/>
+    <path d="M26 40 L88 40 L82 28 L32 28 Z" fill="${C.trunk}"/>
+    <rect x="42" y="48" width="28" height="14" fill="#7d6650"/>
+    <circle cx="118" cy="42" r="6" fill="#e8b48f" stroke="${C.ink}" stroke-width="1.5"/>
+    <path d="M112 44 L104 44 M124 44 L130 44" stroke="${C.ink}" stroke-width="2.5"/>
+    <g transform="translate(122,54) scale(.24)">${birdStanding()}</g>
+  </svg>`;},
+  cNet(){ return `<svg viewBox="0 0 160 110">
+    <rect x="0" y="0" width="160" height="110" fill="#e4efe7"/>
+    <rect x="0" y="62" width="160" height="48" fill="${C.deep}"/>
+    <path d="M40 62 C46 78 60 84 80 80 C100 76 114 82 120 94" stroke="${C.greyD}" stroke-width="2" fill="none"/>
+    <path d="M52 88 L60 70 L72 84 L84 66 L96 84 L108 68 M46 78 L116 80 M52 94 L108 94" stroke="${C.greyD}" stroke-width="1.5" fill="none"/>
+    <path d="M20 100 q16 -5 32 0 t32 0 t32 0 t32 0" stroke="${C.waterD}" stroke-width="1.5" fill="none"/>
+  </svg>`;},
+  cReport(){ return `<svg viewBox="0 0 160 110">
+    <rect x="0" y="0" width="160" height="110" fill="#e9f0e4"/>
+    <rect x="0" y="70" width="160" height="40" fill="${C.deep}"/>
+    <circle cx="58" cy="34" r="9" fill="#e8b48f" stroke="${C.ink}" stroke-width="1.5"/>
+    <path d="M58 43 L58 74 M58 50 L44 62 M58 50 L72 62 M58 74 L48 92 M58 74 L68 92" stroke="${C.ink}" stroke-width="2" fill="none"/>
+    <rect x="66" y="46" width="20" height="15" fill="#fdfdf7" stroke="${C.ink}" stroke-width="1.5"/>
+    <path d="M69 51 L83 51 M69 56 L79 56" stroke="${C.greyD}" stroke-width="1.4"/>
+    <path d="M112 30 q10 -12 24 -2 q12 8 4 18 l-30 -2 Z" fill="#5f9ea0" opacity=".9"/>
+    <circle cx="118" cy="34" r="2" fill="#fff"/>
+    <path d="M118 40 L118 48 M114 52 L122 52" stroke="#fff" stroke-width="2.5"/>
+  </svg>`;},
+  cDrain(){ return `<svg viewBox="0 0 160 110">
+    <rect x="0" y="0" width="160" height="110" fill="#e9e4d6"/>
+    <path d="M20 88 L140 88" stroke="${C.greyD}" stroke-width="2.5"/>
+    <rect x="92" y="74" width="40" height="14" fill="#7d7a70" stroke="${C.ink}" stroke-width="1.8"/>
+    <path d="M98 81 L112 81 M120 81 L126 81" stroke="#fdfdf7" stroke-width="2.5"/>
+    <path d="M30 40 L58 40 L54 72 L34 72 Z" fill="#b9b28e" stroke="${C.ink}" stroke-width="1.6"/>
+    <path d="M46 72 C58 76 84 80 100 80" stroke="#a8a074" stroke-width="3" fill="none" stroke-dasharray="5 4"/>
+  </svg>`;},
+  cDrop(){ return `<svg viewBox="0 0 160 110">
+    <rect x="0" y="0" width="160" height="110" fill="#e9f0e4"/>
+    <rect x="58" y="30" width="46" height="58" fill="#8b958f" stroke="${C.ink}" stroke-width="2"/>
+    <rect x="64" y="38" width="34" height="18" fill="#6f7975"/>
+    <path d="M66 62 L94 62 M66 70 L94 70" stroke="#fdfdf7" stroke-width="2"/>
+    <path d="M36 66 q6 -12 16 -12 M40 78 q6 -10 14 -10" stroke="${C.greenD}" stroke-width="2" fill="none"/>
+    <circle cx="118" cy="52" r="9" fill="#e8b48f" stroke="${C.ink}" stroke-width="1.5"/>
+    <path d="M118 61 L118 88 M118 66 L106 76 M118 66 L130 76 M118 88 L110 96 M118 88 L126 96" stroke="${C.ink}" stroke-width="2" fill="none"/>
+    <path d="M126 40 q4 -8 10 -8" stroke="${C.greenD}" stroke-width="2" fill="none"/>
+  </svg>`;},
+  cSleep(){ return `<svg viewBox="0 0 160 110">
+    <rect x="0" y="0" width="160" height="110" fill="${C.night}" opacity=".92"/>
+    <circle cx="120" cy="28" r="14" fill="#e9e2c8"/>
+    <path d="M30 70 C34 52 50 42 68 44 C86 46 96 58 94 72 L94 88 L30 88 Z" fill="#5a6572"/>
+    <rect x="26" y="88" width="72" height="8" fill="#4a545f"/>
+    <path d="M40 60 q8 -6 16 0 M40 70 q8 -6 16 0" stroke="#3a4652" stroke-width="2" fill="none"/>
+  </svg>`;},
+  cWatch(){ return `<svg viewBox="0 0 160 110">
+    <rect x="0" y="0" width="160" height="110" fill="${C.dawn}"/>
+    <rect x="0" y="72" width="160" height="38" fill="${C.deep}"/>
+    <circle cx="86" cy="30" r="8" fill="#e8b48f" stroke="${C.ink}" stroke-width="1.5"/>
+    <path d="M86 38 L86 70 M86 46 L70 54 M86 46 L102 50 M86 70 L78 90 M86 70 L94 90" stroke="${C.ink}" stroke-width="2" fill="none"/>
+    <path d="M68 44 L88 48 M102 48 L112 44" stroke="${C.ink}" stroke-width="2.5"/>
+    <path d="M64 46 L74 50" stroke="${C.ink}" stroke-width="4"/>
+    <g transform="translate(120,44) scale(.3)">${birdStanding()}</g>
+  </svg>`;},
+
+  /* —— 决策舞台背景（含飞入的琵鹭） —— */
+  stagePond(){ return `<svg viewBox="0 0 400 220">
+    <rect x="0" y="0" width="400" height="150" fill="#e9e4d6"/>
+    <rect x="0" y="150" width="400" height="70" fill="${C.mud}"/>
+    <path d="M0 150 L400 150" stroke="${C.greyD}" stroke-width="2"/>
+    <rect x="24" y="60" width="40" height="90" fill="#d8d2c2" stroke="${C.greyD}" stroke-width="2"/>
+    <rect x="300" y="46" width="56" height="104" fill="#d8d2c2" stroke="${C.greyD}" stroke-width="2"/>
+    <path d="M290 46 L290 20 L320 20" stroke="${C.crane}" stroke-width="4" fill="none"/>
+    <rect x="0" y="170" width="400" height="50" fill="${C.water}" opacity=".85"/>
+    <path class="wave" d="M10 186 q20 -6 40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0" stroke="${C.waterD}" stroke-width="1.6" fill="none"/>
+    <g class="flyin">${birdFlying()}</g>
+  </svg>`;},
+  stageBay(){ return `<svg viewBox="0 0 400 220">
+    <rect x="0" y="0" width="400" height="120" fill="${C.sky}"/>
+    <rect x="0" y="120" width="400" height="100" fill="${C.mud}"/>
+    ${mangrove(20,120,.9)} ${mangrove(340,120,.8)}
+    <g transform="translate(200,96) scale(.5)" opacity=".9">${birdStanding()}</g>
+    <path d="M120 168 q10 -8 20 0 M180 186 q10 -8 20 0" stroke="#c2b492" stroke-width="1.6" fill="none"/>
+    <g class="flyin">${birdFlying()}</g>
+  </svg>`;},
+  stageBeach(){ return `<svg viewBox="0 0 400 220">
+    <rect x="0" y="0" width="400" height="130" fill="${C.dawn}"/>
+    ${waterBand(130, C.deep)}
+    <path d="M250 130 C260 158 286 170 320 166 C344 163 362 170 372 182" stroke="${C.greyD}" stroke-width="2" fill="none" opacity=".8"/>
+    <path d="M280 162 L294 140 L310 160 L326 138 L342 162 M272 152 L352 156" stroke="${C.greyD}" stroke-width="1.5" fill="none" opacity=".7"/>
+    <g class="flyin">${birdFlying()}</g>
+  </svg>`;},
+  stageHome(){ return `<svg viewBox="0 0 400 220">
+    <rect x="0" y="0" width="400" height="150" fill="#eef0e4"/>
+    <rect x="0" y="150" width="400" height="70" fill="${C.mud}"/>
+    <rect x="30" y="60" width="90" height="90" fill="#e4ddc8" stroke="${C.greyD}" stroke-width="2"/>
+    <rect x="30" y="60" width="90" height="24" fill="${C.roof}" opacity=".75"/>
+    <path d="M230 60 q-14 24 0 44 q14 20 0 46" stroke="#b9b28e" stroke-width="5" fill="none"/>
+    <path d="M236 66 q-10 18 0 34" stroke="#a8a074" stroke-width="3" fill="none"/>
+    <path d="M0 150 L400 150" stroke="${C.greyD}" stroke-width="2"/>
+    <g class="flyin">${birdFlying()}</g>
+  </svg>`;},
+  stageCall(){ return `<svg viewBox="0 0 400 220">
+    <rect x="0" y="0" width="400" height="220" fill="${C.night}"/>
+    <circle cx="320" cy="44" r="16" fill="#e9e2c8"/>
+    <path d="M60 50 q12 -12 24 0 M96 66 q10 -10 20 0" stroke="#5a6572" stroke-width="1.8" fill="none"/>
+    <rect x="0" y="184" width="400" height="36" fill="#2e3844"/>
+    <g transform="translate(120,40) scale(.8)"><g class="flyin" style="animation-duration:2.4s">${birdSil()}</g></g>
+  </svg>`;},
+
+  /* —— 琵鹭视角大场景 —— */
+  arrive(){ return `<svg viewBox="0 0 400 220">
+    <rect x="0" y="0" width="400" height="130" fill="${C.dawn}"/>
+    <circle cx="80" cy="46" r="22" fill="#f4d9a8"/>
+    ${waterBand(130, C.deep)}
+    <g transform="translate(-16,-16)"><g class="drift">${birdFlying()}</g></g>
+    <path d="M250 40 q11 -10 22 0 M290 60 q9 -8 18 0" stroke="${C.ink}" stroke-width="1.6" fill="none" opacity=".6"/>
+  </svg>`;},
+  lostRoost(){ return `<svg viewBox="0 0 400 220">
+    <rect x="0" y="0" width="400" height="220" fill="#dcd8ce"/>
+    <rect x="0" y="176" width="400" height="44" fill="#b8b2a2"/>
+    <path d="M60 176 L60 90 L100 90 L100 176 M140 176 L140 70 L180 70 L180 176 M220 176 L220 104 L260 104 L260 176 M300 176 L300 84 L340 84 L340 176" fill="#c2bcae" stroke="${C.greyD}" stroke-width="2"/>
+    <path d="M60 120 L100 120 M60 148 L100 148 M140 100 L180 100 M140 130 L180 130 M220 134 L260 134 M300 116 L340 116" stroke="${C.greyD}" stroke-width="1.5"/>
+    <path d="M190 30 L240 30 L240 54 L190 54 Z M200 42 L230 42" fill="#e8e2d2" stroke="${C.greyD}" stroke-width="2"/>
+    <path d="M250 40 L250 18 L268 18" stroke="${C.crane}" stroke-width="3.5" fill="none"/>
+    <g transform="translate(60,-4) scale(.85)"><g class="flyaway">${birdFlying()}</g></g>
+  </svg>`;},
+  safeRoost(){ return `<svg viewBox="0 0 400 220">
+    <rect x="0" y="0" width="400" height="136" fill="${C.dusk}"/>
+    <circle cx="316" cy="44" r="18" fill="#f2ecd2"/>
+    ${waterBand(136, C.deep)}
+    ${mangrove(26,136,.8)} ${mangrove(330,138,.7)}
+    <g transform="translate(120,14)">${birdStanding()}</g>
+    <path d="M60 90 q10 -10 20 0 M96 78 q10 -10 20 0" stroke="${C.ink}" stroke-width="1.5" fill="none" opacity=".5"/>
+  </svg>`;},
+  forageClean(){ return `<svg viewBox="0 0 400 220">
+    <rect x="0" y="0" width="400" height="120" fill="${C.sky}"/>
+    ${waterBand(120, C.water)}
+    <path d="M60 60 q10 -10 20 0 M300 52 q10 -10 20 0 M330 68 q9 -8 18 0" stroke="${C.ink}" stroke-width="1.5" fill="none" opacity=".5"/>
+    <g transform="translate(100,10)">${birdStanding()}</g>
+    <circle cx="90" cy="160" r="3" fill="${C.waterD}"/><circle cx="230" cy="180" r="2.5" fill="${C.waterD}"/><circle cx="320" cy="164" r="3" fill="${C.waterD}"/>
+  </svg>`;},
+  forageMurky(){ return `<svg viewBox="0 0 400 220">
+    <rect x="0" y="0" width="400" height="120" fill="#cfc8a8"/>
+    ${waterBand(120, '#b3b08a')}
+    <path d="M70 150 L96 128 M120 156 L146 134 M170 150 L196 128 M220 156 L246 134" stroke="#8f8c62" stroke-width="1.8"/>
+    <g transform="translate(100,10)">${birdStanding()}</g>
+    <path d="M300 70 L344 86 M308 52 L350 68" stroke="#8f8c62" stroke-width="2"/>
+  </svg>`;},
+  encounter(){ return `<svg viewBox="0 0 400 220">
+    <rect x="0" y="0" width="400" height="150" fill="#e9e4d6"/>
+    <rect x="0" y="150" width="400" height="70" fill="${C.mud}"/>
+    <path d="M20 150 L380 150" stroke="${C.greyD}" stroke-width="2.5"/>
+    <g transform="translate(236,10) scale(1.15)">
+      <circle cx="20" cy="22" r="9" fill="#e8b48f" stroke="${C.ink}" stroke-width="1.6"/>
+      <path d="M20 31 L20 62 M20 40 L8 50 M20 40 L32 50 M20 62 L12 84 M20 62 L28 84" stroke="${C.ink}" stroke-width="2.2" fill="none"/>
+      <path d="M12 36 L28 36 L26 50 L14 50 Z" fill="#c96f52"/>
+      <circle cx="58" cy="18" r="9" fill="#e8b48f" stroke="${C.ink}" stroke-width="1.6"/>
+      <path d="M58 27 L58 58 M58 36 L46 46 M58 36 L70 46 M58 58 L50 84 M58 58 L66 84" stroke="${C.ink}" stroke-width="2.2" fill="none"/>
+      <path d="M50 32 L66 32 L64 46 L52 46 Z" fill="#5f8a68"/>
+      <circle cx="94" cy="58" r="9" fill="#c9b18a" stroke="${C.ink}" stroke-width="1.6"/>
+      <path d="M94 67 L91 84 M94 67 L100 84 M103 56 q10 -4 10 4 q0 7 -10 5" stroke="${C.ink}" stroke-width="2.2" fill="none"/>
+    </g>
+    <g transform="translate(20,-6)"><g class="startle">${birdFlying()}</g></g>
+  </svg>`;},
+  netWater(){ return `<svg viewBox="0 0 400 220">
+    <rect x="0" y="0" width="400" height="130" fill="${C.sky}"/>
+    ${waterBand(130, C.deep)}
+    <path d="M90 130 C100 160 130 174 170 168 C210 162 240 170 256 186" stroke="${C.greyD}" stroke-width="2.2" fill="none"/>
+    <path d="M110 172 L126 146 L146 168 L166 140 L186 168 L206 146 L226 172 M100 158 L248 162 M112 190 L236 190" stroke="${C.greyD}" stroke-width="1.6" fill="none" opacity=".8"/>
+    <path d="M60 96 q10 -10 20 0" stroke="${C.ink}" stroke-width="1.5" fill="none" opacity=".5"/>
+  </svg>`;},
+  boatNet(){ return `<svg viewBox="0 0 400 220">
+    <rect x="0" y="0" width="400" height="130" fill="${C.sky}"/>
+    ${waterBand(130, C.water)}
+    <path d="M100 108 L200 108 L184 130 L118 130 Z" fill="#7a9cc0" stroke="${C.ink}" stroke-width="2"/>
+    <path d="M150 108 L150 58 M150 58 L188 100" stroke="${C.ink}" stroke-width="2.5" fill="none"/>
+    <path d="M188 100 L212 96 L204 112 L192 110 Z" fill="${C.greyD}"/>
+    <path d="M230 70 q10 -10 20 0 M256 84 q9 -8 18 0" stroke="${C.ink}" stroke-width="1.5" fill="none" opacity=".6"/>
+  </svg>`;},
+  netTrap(){ return `<svg viewBox="0 0 400 220">
+    <rect x="0" y="0" width="400" height="130" fill="#cfd8cf"/>
+    ${waterBand(130, C.deep)}
+    <g transform="translate(110,6)">${birdStanding()}</g>
+    <path d="M150 190 L165 162 L180 192 L195 158 L210 194 L225 162 L240 192 M145 176 L250 180 M155 200 L235 200" stroke="${C.greyD}" stroke-width="1.8" fill="none"/>
+    <path d="M60 100 L84 86 M300 96 L324 82" stroke="${C.ink}" stroke-width="1.5" opacity=".4"/>
+  </svg>`;},
+  spring(){ return `<svg viewBox="0 0 400 220">
+    <rect x="0" y="0" width="400" height="140" fill="${C.sky}"/>
+    <circle cx="322" cy="42" r="20" fill="#f4e3b8"/>
+    ${waterBand(140, C.water)}
+    ${mangrove(40,140,1)} ${mangrove(310,142,.85)}
+    <g transform="translate(-10,-24)"><g class="drift">${birdFlying()}</g></g>
+    <path d="M80 52 q11 -10 22 0 M140 42 q10 -9 20 0 M250 38 q10 -9 20 0" stroke="${C.ink}" stroke-width="1.6" fill="none" opacity=".7"/>
+  </svg>`;},
+  nightSil(){ return `<svg viewBox="0 0 400 220">
+    <rect x="0" y="0" width="400" height="220" fill="${C.night}"/>
+    <circle cx="316" cy="46" r="17" fill="#e9e2c8"/>
+    <rect x="0" y="180" width="400" height="40" fill="#2e3844"/>
+    <g transform="translate(110,20)">${birdSil()}</g>
+    <path d="M70 60 q10 -10 20 0 M300 90 q9 -8 18 0" stroke="#5a6572" stroke-width="1.5" fill="none"/>
+  </svg>`;},
+  watch(){ return `<svg viewBox="0 0 400 220">
+    <rect x="0" y="0" width="400" height="140" fill="${C.dawn}"/>
+    ${waterBand(140, C.water)}
+    <path d="M60 140 L60 200 M340 140 L340 200 M60 168 L340 168" stroke="${C.trunk}" stroke-width="3" fill="none"/>
+    <g transform="translate(66,28) scale(1.1)">
+      <circle cx="20" cy="14" r="9" fill="#e8b48f" stroke="${C.ink}" stroke-width="1.8"/>
+      <path d="M20 23 L20 58 M20 32 L2 42 M20 32 L38 36 M20 58 L10 82 M20 58 L30 82" stroke="${C.ink}" stroke-width="2.4" fill="none"/>
+      <path d="M0 36 L14 41 M36 36 L44 30" stroke="${C.ink}" stroke-width="3"/>
+      <path d="M-6 38 L8 43" stroke="${C.ink}" stroke-width="5"/>
+    </g>
+    <g transform="translate(240,60) scale(.55)"><g class="bob">${birdStanding()}</g></g>
+  </svg>`;},
+  /* —— 结局场景 —— */
+  awaken(){ return `<svg viewBox="0 0 400 220">
+    <defs><linearGradient id="gd" x1="0" x2="1">
+      <stop offset="0" stop-color="#4a5560"/><stop offset="1" stop-color="#d9ebee"/>
+    </linearGradient></defs>
+    <rect x="0" y="0" width="400" height="220" fill="url(#gd)"/>
+    <rect x="0" y="176" width="400" height="44" fill="#8fa8a4" opacity=".5"/>
+    <g transform="translate(-20,-14)"><g class="drift">${birdFlying()}</g></g>
+    <path d="M200 16 L200 200 M200 16 L186 32 M200 16 L214 32" stroke="#fdfdf7" stroke-width="1.5" opacity=".6"/>
+    <path d="M120 60 q11 -10 22 0 M280 44 q10 -9 20 0" stroke="#fdfdf7" stroke-width="1.6" fill="none" opacity=".5"/>
+  </svg>`;},
+  storm(){ return `<svg viewBox="0 0 400 220">
+    <rect x="0" y="0" width="400" height="220" fill="#c9cdc9"/>
+    <rect x="0" y="176" width="400" height="44" fill="#9aa39b"/>
+    <path d="M60 26 L48 58 M120 18 L108 50 M190 28 L178 60 M260 16 L248 48 M330 30 L318 62 M40 80 L28 112 M370 76 L358 108" stroke="#8b958f" stroke-width="2"/>
+    <g transform="translate(-10,-8)"><g class="drift">${birdFlying()}</g></g>
+    <path d="M30 190 q40 -8 80 -2 q50 6 100 -2 q60 -8 120 0" stroke="#7c857d" stroke-width="1.6" fill="none" opacity=".7"/>
+  </svg>`;},
+  darkEnd(){ return `<svg viewBox="0 0 400 220">
+    <rect x="0" y="0" width="400" height="220" fill="#57616b"/>
+    <rect x="0" y="180" width="400" height="40" fill="#454f58"/>
+    <g transform="translate(140,40) scale(.8)" opacity=".8">${birdSil()}</g>
+    <path d="M90 76 q9 -8 18 0 M286 66 q9 -8 18 0" stroke="#7c8894" stroke-width="1.5" fill="none" opacity=".5"/>
+    <path d="M60 196 q40 -6 80 -2 q50 4 100 -2 q60 -6 120 0" stroke="#39434c" stroke-width="1.5" fill="none"/>
+  </svg>`;}
+};
+
+/* 其他生物剪影 */
+const CREATURES = `
+<svg viewBox="0 0 90 70"><g fill="none" stroke="${C.ink}" stroke-width="1.6" stroke-linecap="round"><path d="M20 44 C30 30 52 28 62 40 C66 44 64 50 58 52 C46 56 30 54 22 48 Z"/><path d="M60 42 q8 -2 12 2"/><circle cx="66" cy="43" r="1.2" fill="${C.ink}"/><path d="M30 54 l-2 8 m24 -8 l2 8"/><path d="M14 62 q10 -6 20 0"/></g></svg>
+<svg viewBox="0 0 90 70"><g fill="none" stroke="${C.ink}" stroke-width="1.6" stroke-linecap="round"><path d="M24 50 q10 -18 26 -12 q10 4 6 12 q-6 10 -22 8 Z"/><circle cx="50" cy="40" r="1.3" fill="${C.ink}"/><path d="M52 44 q6 2 8 6"/><path d="M20 60 q14 -6 28 0 t28 0"/></g></svg>
+<svg viewBox="0 0 90 70"><g fill="none" stroke="${C.ink}" stroke-width="1.6" stroke-linecap="round"><path d="M36 34 C44 22 62 20 70 30 C60 34 52 40 44 40 Z"/><path d="M66 28 q6 -6 8 -12 q2 8 -2 12"/><circle cx="68" cy="26" r="1.1" fill="${C.ink}"/><path d="M42 40 l-2 18 m10 -18 l2 18"/><path d="M14 62 q20 -8 40 0"/></g></svg>
+<svg viewBox="0 0 90 70"><g fill="none" stroke="${C.ink}" stroke-width="1.6" stroke-linecap="round"><path d="M26 46 C30 32 44 24 56 28 C60 30 62 34 60 38 L50 48 C42 52 32 52 26 46 Z"/><path d="M36 52 l-2 10 m20 -10 l0 10 m-14 -10 l-4 10 m22 -10 l4 10"/><path d="M54 30 q6 -8 4 -14 q8 6 6 14"/><circle cx="56" cy="32" r="1.1" fill="${C.ink}"/></g></svg>`;
+
+/* =========================================================
+   状态
+========================================================= */
+const S = {
+  name:"", r1:[null,null,null,null,null], r2:[null,null,null,null,null],
+  hp:60, safety:80, survived:true, round:"r1", q:0
+};
+const $ = id => document.getElementById(id);
+function show(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  $(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+function toast(msg){
+  const t=$('toast'); t.textContent=msg; t.classList.add('show');
+  clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove('show'),1800);
+}
+function setArt(id,name){ $(id).innerHTML = ART[name] ? ART[name]() : ''; }
+/* 判断第 i 个决策的选择是否为好选项（统一走数据，杜绝索引错位） */
+const isGood = (round,i) => DECISIONS[i].opts[S[round][i]].good;
+
+/* =========================================================
+   决策流程：动画场景 → 选项浮现 → 琵鹭反应 → 下一个
+========================================================= */
+let reactTimer=null;
+const STAGE_SCENES=['stagePond','stageBay','stageBeach','stageHome','stageCall'];
+function startRound(round){
+  S.round = round; S.q = 0;
+  show('s-decision');
+  renderDecision();
+}
+function renderDecision(){
+  const d = DECISIONS[S.q];
+  $('d-kicker').textContent = (S.round==='r1' ? '第一部分 · 人类视角' : '第三部分 · 人类视角 · 反思') + ` ｜ ${S.q+1} / 5`;
+  $('d-title').textContent = d.title;
+  $('d-desc').textContent = d.desc;
+  $('d-hint').classList.remove('show');
+  $('d-react').classList.remove('on');
+  $('d-opts').style.display='';
+  $('d-desc').style.display='';
+  clearTimeout(reactTimer);
+
+  /* 舞台：彩色场景 + 琵鹭飞入 */
+  $('d-stage').innerHTML = ART[STAGE_SCENES[S.q]]();
+  /* 选项：交错浮现 */
+  const wrap = $('d-opts'); wrap.innerHTML='';
+  d.opts.forEach((o,i)=>{
+    const b=document.createElement('button');
+    b.className='opt';
+    b.style.animationDelay = (1.2 + i*0.35)+'s';
+    b.innerHTML = `<div>${ART[o.art]()}</div>
+      <div class="t">${o.t}</div>
+      <div class="s">${o.s}</div>
+      <div class="prev">第一次：你选了这一项</div>`;
+    if(S.round==='r2' && S.r1[S.q]===i) b.classList.add('mine');
+    b.onclick=()=>choose(i);
+    wrap.appendChild(b);
+    b.classList.add('show');
+  });
+  if(S.round==='r2'){
+    $('d-hint').textContent = d.hint;
+    $('d-hint').classList.add('show');
+  }
+}
+function choose(i){
+  const d = DECISIONS[S.q];
+  S[S.round][S.q]=i;
+  /* 琵鹭的反应动画 + 一句短文字 */
+  const r = d.react[ d.opts[i].good ? 'good' : 'bad' ];
+  $('d-opts').style.display='none';
+  $('d-desc').style.display='none';
+  $('d-stage').innerHTML = ART[r.art]();
+  $('d-react').classList.add('on');
+  $('d-react-line').textContent = r.line;
+  $('d-react-note').textContent = S.round==='r2'
+    ? (S.r1[S.q]!==i ? '决策已修改' : '保持原决策') : '';
+  /* 反应动画结束后自动进入下一个 */
+  clearTimeout(reactTimer);
+  reactTimer=setTimeout(()=>{ $('d-react').classList.remove('on'); nextDecision(); }, 3400);
+}
+function nextDecision(){
+  S.q++;
+  if(S.q<5){ renderDecision(); }
+  else if(S.round==='r1'){ show('s-brief2'); }
+  else { finishStory(); }
+}
+
+/* =========================================================
+   第二部分：琵鹭的冬天
+========================================================= */
+function updateHUD(){
+  $('hp-num').textContent = Math.max(0,Math.round(S.hp));
+  const p = Math.max(0,Math.min(100,S.hp));
+  const fill=$('hpfill');
+  fill.style.width = p+'%';
+  fill.style.background = p<30 ? 'var(--danger)' : 'var(--teal)';
+  const ic=$('safety-icon'), lb=$('safety-label');
+  if(S.safety>=70){ ic.textContent='○'; lb.textContent='平静'; }
+  else if(S.safety>=40){ ic.textContent='△'; lb.textContent='警觉'; }
+  else { ic.textContent='！'; lb.textContent='危险'; lb.classList.add('danger-text'); ic.classList.add('danger-text'); }
+  if(S.safety>=40){ ic.classList.remove('danger-text'); lb.classList.remove('danger-text'); }
+}
+function hpDelta(v){
+  S.hp = Math.max(0, Math.min(100, S.hp+v));
+  updateHUD();
+  return S.hp<=0;
+}
+function safetyDelta(v){ S.safety = Math.max(0, Math.min(100, S.safety+v)); updateHUD(); }
+
+let QUEUE=[], QI=0;
+function runEvents(queue){
+  QUEUE = queue; QI = 0;
+  $('hud').classList.add('on');
+  updateHUD();
+  show('s-event');
+  runNext();
+}
+function runNext(){
+  if(S.hp<=0 && !S._deathShown){ deathSequence(); return; }
+  if(QI>=QUEUE.length){ endWinter(); return; }
+  const step = QUEUE[QI++];
+  step();
+}
+function eventView(art, lines, actions){
+  setArt('event-art', art);
+  $('event-lines').innerHTML = lines;
+  $('event-extra').innerHTML='';
+  const act=$('event-actions'); act.innerHTML='';
+  (actions||[]).forEach(([label,fn,small])=>{
+    const b=document.createElement('button');
+    b.className='btn'+(small?' small':''); b.textContent=label;
+    b.onclick=fn; act.appendChild(b);
+  });
+}
+
+function winterStart(){
+  S._deathShown=false;
+  const queue=[];
+  /* 到达 */
+  queue.push(()=>eventView('arrive',
+    `2024 年 10 月 15 日，清晨。\n\n经过数千公里的飞行，\n你——一只黑脸琵鹭，终于抵达深圳湾。\n\n你要在这里度过整个冬天，\n攒够体力，明年春天才能北归繁殖。\n\n你的生存，取决于这里的环境，\n以及……这座城市里无数普通人的选择。`,
+    [['继续',runNext]]));
+  /* 决策1：夜栖地（鱼塘投票） */
+  if(isGood('r1',0)){
+    queue.push(()=>{ hpDelta(15); safetyDelta(20);
+      eventView('safeRoost',
+      `你发现了一片安静的鱼塘——\n水浅，鱼多，几乎没有干扰。\n\n这里将成为你整个冬天的夜栖地。\n<span class="fx">体力 +15 ｜ 安全度上升</span>`,
+      [['继续',runNext]]); });
+  }else{
+    queue.push(()=>{ hpDelta(-15); safetyDelta(-30);
+      eventView('lostRoost',
+      `你常去的那片鱼塘，消失了。\n\n围栏立了起来，机器日夜轰鸣。\n你必须连夜寻找新的夜栖地，\n在陌生的地方，警惕每一处阴影。\n<span class="fx bad">体力 -15 ｜ 安全度大幅下降</span>`,
+      [['继续',runNext]]); });
+  }
+  /* 觅食（决策4：废水） */
+  if(isGood('r1',3)){
+    queue.push(()=>forageGame(true));
+  }else{
+    queue.push(()=>forageGame(false));
+  }
+  /* 游客（决策2：周末观鸟） */
+  if(isGood('r1',1)){
+    queue.push(()=>{ hpDelta(10); safetyDelta(20);
+      eventView('forageClean',
+      `滩涂边有围栏和隐蔽的观鸟屋。\n人们在远处静静观察，没有人打扰你。\n\n你可以安安心心，把长喙扫进水里。\n<span class="fx">体力 +10 ｜ 安全度上升</span>`,
+      [['继续',runNext]]); });
+  }else{
+    queue.push(()=>escapeGame(0));
+    queue.push(()=>escapeGame(1));
+    queue.push(()=>escapeGame(2));
+  }
+  /* 渔网（决策3） */
+  if(!isGood('r1',2)){
+    queue.push(()=>netGame());
+  }else{
+    queue.push(()=>{ hpDelta(5);
+      eventView('boatNet',
+      `这片水域不久前有人清理过。\n没有看不见的网，没有藏起来的地笼。\n\n你几乎忘了危险是什么感觉。\n<span class="fx">体力 +5</span>`,
+      [['继续',runNext]]); });
+  }
+  /* 寒潮考验 */
+  queue.push(()=>{
+    if(S.hp>=45){ hpDelta(-8);
+      eventView('storm',
+      `一月，寒潮南下。\n气温骤降，滩涂结了薄冰。\n\n你缩起一条腿，把喙埋进背羽。\n好在秋天攒下的体力，还足够你撑过去。\n<span class="fx bad">体力 -8</span>`,
+      [['继续',runNext]]); }
+    else if(S.hp>0){
+      eventView('storm',
+      `一月，寒潮南下。\n你已经在饥饿和惊吓中消耗了太多。\n\n寒风里，你抖得越来越厉害……\n这个冬天，对你来说格外漫长。`,
+      [['继续',runNext]]); }
+    else runNext();
+  });
+  runEvents(queue);
+}
+
+/* 觅食小游戏 */
+function forageGame(clean){
+  setArt('event-art', clean?'forageClean':'forageMurky');
+  $('event-lines').innerHTML = clean
+    ? `潮水退去，滩涂上到处是小鱼小虾。\n把勺状的长喙扫进水里，几乎不会落空。`
+    : `你把长喙扫进水里——水是浑的，气味不对。\n小鱼小虾少得可怜。\n你要花远比从前更多的时间觅食。`;
+  $('event-actions').innerHTML='';
+  const extra=$('event-extra'); extra.innerHTML='';
+  const log=document.createElement('div'); log.className='mg-log';
+  const btn=document.createElement('button'); btn.className='minigame-btn'; btn.textContent='低头觅食';
+  extra.appendChild(btn); extra.appendChild(log);
+  let n=0, gained=0;
+  btn.onclick=()=>{
+    n++;
+    if(clean){ hpDelta(5); gained+=5; log.textContent=`找到一条小鱼！体力 +5（${n}/3）`; }
+    else{
+      if(Math.random()<0.45){ hpDelta(3); gained+=3; log.textContent=`捞到一只小虾。体力 +3（${n}/3）`; }
+      else { log.textContent=`什么也没找到……（${n}/3）`; }
+    }
+    if(n>=3){
+      btn.style.display='none';
+      const tip = clean
+        ? `收获不错，这个冬天可以吃得很好。\n<span class="fx">共获得体力 +${gained}</span>`
+        : `这样的效率，远远填不饱肚子。\n<span class="fx">共获得体力 +${gained}（清水滩涂约为三倍）</span>`;
+      $('event-lines').innerHTML += `<br>${tip}`;
+      const c=document.createElement('button'); c.className='btn'; c.textContent='继续'; c.onclick=runNext;
+      $('event-actions').appendChild(c);
+    }
+  };
+}
+/* 飞逃小游戏 */
+function escapeGame(round){
+  setArt('event-art','encounter');
+  $('event-lines').innerHTML = `几个游客翻过围栏，带着狗朝你走来——\n快飞离！`;
+  $('event-actions').innerHTML='';
+  const extra=$('event-extra'); extra.innerHTML='';
+  const tb=document.createElement('div'); tb.className='timerbar'; tb.innerHTML='<i></i>';
+  const btn=document.createElement('button'); btn.className='minigame-btn'; btn.textContent='振翅飞逃';
+  extra.appendChild(tb); extra.appendChild(btn);
+  const bar=tb.querySelector('i');
+  requestAnimationFrame(()=>{ bar.style.transition='transform 2.4s linear'; bar.style.transform='scaleX(0)'; });
+  let done=false;
+  const t0=performance.now();
+  const finish=(fast)=>{
+    if(done) return; done=true;
+    btn.disabled=true; btn.style.display='none'; tb.style.display='none';
+    if(fast){ hpDelta(-10); safetyDelta(-10);
+      $('event-lines').innerHTML=`你在最后一刻腾空而起，心跳如鼓。\n受惊之后，很久都无法安心觅食。\n<span class="fx bad">体力 -10 ｜ 安全度下降</span>`;
+    }else{ hpDelta(-15); safetyDelta(-10);
+      $('event-lines').innerHTML=`你飞得慢了半拍，狗叫声几乎贴着翅膀掠过。\n你落到了更远的滩涂上，浑身发抖。\n<span class="fx bad">体力 -15 ｜ 安全度下降</span>`;
+    }
+    if(round<2){
+      const c=document.createElement('button'); c.className='btn'; c.textContent='继续'; c.onclick=runNext;
+      $('event-actions').appendChild(c);
+    }else{
+      $('event-lines').innerHTML += `<br><span class="fx">这个冬天，你已经被迫飞逃了无数次……</span>`;
+      const c=document.createElement('button'); c.className='btn'; c.textContent='继续'; c.onclick=runNext;
+      $('event-actions').appendChild(c);
+    }
+  };
+  btn.onclick=()=>finish(performance.now()-t0<2400);
+  setTimeout(()=>finish(false), 2500);
+}
+/* 渔网小游戏 */
+function netGame(){
+  if(Math.random()<0.35){
+    eventView('forageClean',
+      `你的脚掠过水底，忽然碰到一团滑腻的东西。\n你本能地一蹬——还好，只是缠住的水草。\n\n但这片水域，让你不敢再大意。`,
+      [['继续',runNext]]);
+    return;
+  }
+  hpDelta(-35); safetyDelta(-15);
+  setArt('event-art','netTrap');
+  $('event-lines').innerHTML = `你的脚被水下的什么东西缠住了——\n是那张被丢弃的渔网！\n\n越挣越紧。你必须拼命挣扎。\n<span class="fx bad">体力 -35</span>`;
+  $('event-actions').innerHTML='';
+  const extra=$('event-extra'); extra.innerHTML='';
+  const log=document.createElement('div'); log.className='mg-log';
+  const btn=document.createElement('button'); btn.className='minigame-btn'; btn.textContent='挣扎！';
+  extra.appendChild(btn); extra.appendChild(log);
+  let n=0;
+  btn.onclick=()=>{
+    n++;
+    const dead = hpDelta(-4);
+    log.textContent = dead ? '……' : `你用尽全身力气扭动身体（${n}/4）`;
+    if(n>=4 || dead){
+      btn.style.display='none';
+      if(S.hp<=0){ deathSequence(); return; }
+      $('event-lines').innerHTML = `你终于挣脱了。\n脚上留下深深的勒痕，羽毛凌乱不堪。\n\n从今往后，你会害怕每一片安静的水域。\n<span class="fx bad">体力持续流失</span>`;
+      const c=document.createElement('button'); c.className='btn'; c.textContent='继续'; c.onclick=runNext;
+      $('event-actions').appendChild(c);
+    }
+  };
+}
+
+/* 遇难 */
+function deathSequence(){
+  S._deathShown=true; S.survived=false;
+  $('hud').classList.remove('on');
+  const badLines=[
+    '老鱼塘被建成了商业区，它失去了最安全的夜栖地',
+    '游客一次次翻过围栏走近，它被迫飞逃、体力耗尽',
+    '那张废弃的渔网没有被上报回收，它的脚被缠住，再也无法飞翔',
+    '清洁废水被倒进雨水管，滩涂变浑，它花了远超想象的时间觅食'
+  ];
+  let recap='';
+  for(let i=0;i<4;i++){
+    if(!isGood('r1',i)) recap += `还记得吗？\n当${badLines[i]}时——\n\n`;
+  }
+  if(!recap) recap='体力耗尽之前，它经历了太多看不见的困难——\n\n';
+  eventView('nightSil',
+    `<span class="bad">这只黑脸琵鹭的旅程，在这里结束了。</span>\n\n它没能等到春天，\n没能飞回北方的繁殖地，\n没能延续自己的生命。\n\n而导致这一切的，\n是几个月里，一些看似普通的小事……\n\n${recap}这些，都是你在人类视角中做出的选择。`,
+    [['回到人类视角',()=>{ show('s-brief3'); }]]);
+}
+
+/* 成功越冬 */
+function endWinter(){
+  $('hud').classList.remove('on');
+  if(S.hp>=40){
+    S.survived=true;
+    eventView('spring',
+      `2025 年 3 月，春天。\n\n你成功了。\n体力充沛，羽毛丰满。\n\n你和其他黑脸琵鹭一起，启程北归。\n8000 公里的旅程，你完成了一半。\n\n而这一切，要感谢深圳湾为你提供的——\n安全的栖息地、充足的食物、较少的干扰。\n\n这些，都源于几个月里，\n许多普通人做出的善意选择。`,
+      [['回到人类视角',()=>{ show('s-brief3'); }]]);
+  }else{
+    S.survived=true;
+    eventView('spring',
+      `2025 年 3 月，春天。\n\n你活下来了——勉强。\n这个冬天消耗了你太多，\n北归的路上，每一步都更加艰难。\n\n不是所有的同伴都能撑到这里。\n你回头望了一眼深圳湾，\n振翅，向北飞去。`,
+      [['回到人类视角',()=>{ show('s-brief3'); }]]);
+  }
+}
+
+/* =========================================================
+   第四部分：结局
+========================================================= */
+function calcEnding(){
+  const g1=S.r1.filter((v,i)=>DECISIONS[i].opts[v].good).length;
+  const g2=S.r2.filter((v,i)=>DECISIONS[i].opts[v].good).length;
+  const changed=S.r1.filter((v,i)=>v!==S.r2[i]).length;
+  let key;
+  if(g1===5) key='A';
+  else if(g2===5) key='B';
+  else if(g2>g1) key='C';
+  else key='D';
+  return {key,g1,g2,changed};
+}
+function finishStory(){
+  const r=calcEnding();
+  const e=ENDINGS[r.key];
+  $('ending-tag').textContent=e.tag;
+  setArt('ending-art', e.art);
+  let txt = e.text.replace('[NAME]',S.name).replace('[X]',r.changed);
+  if(r.key!=='D'){
+    txt += `\n\n（在这段体验中，那只琵鹭${S.survived?'成功越冬，北归繁殖':'没能熬过这个冬天'}）`;
+  }
+  $('ending-text').textContent = txt;
+  $('silhouettes').innerHTML = CREATURES;
+  $('silhouettes').style.opacity = (r.key==='D') ? '.5' : '';
+  S._ending = r.key;
+  show('s-ending');
+}
+
+/* =========================================================
+   证书
+========================================================= */
+function drawCert(){
+  const cv=$('certCanvas'), ctx=cv.getContext('2d');
+  const W=cv.width, H=cv.height;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle='#ffffff'; ctx.fillRect(0,0,W,H);
+  const ink='#2f2f2c', soft='#8a8a84', teal='#5f9ea0', yellow='#ecd27a';
+  ctx.strokeStyle=ink; ctx.lineWidth=4; ctx.strokeRect(50,50,W-100,H-100);
+  ctx.lineWidth=1.5; ctx.strokeRect(66,66,W-132,H-132);
+  ctx.strokeStyle=teal; ctx.lineWidth=3;
+  ctx.beginPath(); ctx.moveTo(W/2-140,120); ctx.lineTo(W/2+140,120); ctx.stroke();
+  const serif='"Songti SC","STSong","Noto Serif SC","SimSun",serif';
+  ctx.textAlign='center';
+  ctx.fillStyle=ink;
+  ctx.font='600 52px '+serif;
+  ctx.fillText('深圳湾红树林生态学习证书', W/2, 210);
+  ctx.font='20px '+serif; ctx.fillStyle=soft;
+  ctx.fillText('SHENZHEN BAY MANGROVE ECOLOGY CERTIFICATE', W/2, 248);
+  ctx.fillStyle=soft; ctx.font='24px '+serif;
+  ctx.fillText('兹 证 明', W/2, 340);
+  ctx.fillStyle=ink; ctx.font='600 64px '+serif;
+  ctx.fillText(S.name, W/2, 430);
+  ctx.strokeStyle=soft; ctx.lineWidth=1.5;
+  ctx.beginPath(); ctx.moveTo(W/2-130,448); ctx.lineTo(W/2+130,448); ctx.stroke();
+  ctx.fillStyle=ink; ctx.font='26px '+serif;
+  ctx.fillText('已完成《如果我是它》互动学习', W/2, 530);
+  ctx.fillText('理解了普通人的选择对野生动物的影响', W/2, 578);
+  ctx.fillText('学会了从其他生命的视角思考问题', W/2, 626);
+  ctx.fillStyle=soft; ctx.font='italic 26px '+serif;
+  ctx.fillText('「'+ENDINGS[S._ending].comment+'」', W/2, 700);
+  /* 简笔琵鹭（白身黑喙黄羽） */
+  ctx.save(); ctx.translate(W/2, 780); ctx.lineCap='round';
+  ctx.strokeStyle=ink; ctx.lineWidth=5;
+  ctx.beginPath(); ctx.moveTo(-38,10); ctx.lineTo(-44,44); ctx.moveTo(-16,12); ctx.lineTo(-8,44); ctx.stroke();
+  ctx.fillStyle='#fdfdf7'; ctx.strokeStyle=ink; ctx.lineWidth=3;
+  ctx.beginPath();
+  ctx.moveTo(-78,0); ctx.bezierCurveTo(-58,-22,-8,-26,26,-14);
+  ctx.bezierCurveTo(36,-10,40,-4,36,2); ctx.bezierCurveTo(16,14,-24,16,-50,8);
+  ctx.bezierCurveTo(-62,4,-82,8,-78,0); ctx.closePath(); ctx.fill(); ctx.stroke();
+  ctx.fillStyle=yellow;
+  ctx.beginPath(); ctx.ellipse(-34,6,16,8,-.4,0,Math.PI*2); ctx.fill();
+  ctx.strokeStyle=ink; ctx.lineWidth=12;
+  ctx.beginPath(); ctx.moveTo(28,-10); ctx.bezierCurveTo(40,-16,46,-26,48,-38); ctx.stroke();
+  ctx.strokeStyle='#fdfdf7'; ctx.lineWidth=8;
+  ctx.beginPath(); ctx.moveTo(28,-10); ctx.bezierCurveTo(40,-16,46,-26,48,-38); ctx.stroke();
+  ctx.fillStyle='#fdfdf7'; ctx.strokeStyle=ink; ctx.lineWidth=3;
+  ctx.beginPath(); ctx.arc(52,-42,10,0,Math.PI*2); ctx.fill(); ctx.stroke();
+  ctx.fillStyle='#3b3b39';
+  ctx.beginPath(); ctx.ellipse(48,-44,6,7,0,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle='#3b3b39';
+  ctx.beginPath();
+  ctx.moveTo(46,-48); ctx.bezierCurveTo(32,-45,18,-37,6,-27);
+  ctx.bezierCurveTo(-6,-17,-18,-8,-24,-2);
+  ctx.bezierCurveTo(-29,4,-23,10,-14,5);
+  ctx.bezierCurveTo(-6,1,4,-10,12,-20);
+  ctx.bezierCurveTo(24,-34,38,-42,50,-42); ctx.closePath(); ctx.fill();
+  ctx.restore();
+  /* 日期与落款 */
+  ctx.fillStyle=soft; ctx.font='22px '+serif;
+  ctx.fillText('颁发日期：'+certDate(), W/2, 868);
+  ctx.fillStyle=ink; ctx.font='24px '+serif;
+  ctx.fillText('深圳湾红树林生态教育项目', W/2, 906);
+}
+function certDate(){
+  const d=new Date();
+  return `${d.getFullYear()} 年 ${d.getMonth()+1} 月 ${d.getDate()} 日`;
+}
+
+/* =========================================================
+   事件绑定与初始化
+========================================================= */
+$('btn-start').onclick=()=>{
+  const v=$('name-input').value.trim();
+  if(!v){ toast('请先输入你的姓名'); $('name-input').focus(); return; }
+  S.name=v;
+  $('brief1-name').textContent=v;
+  show('s-brief1');
+};
+$('name-input').addEventListener('keydown',e=>{ if(e.key==='Enter') $('btn-start').click(); });
+$('btn-brief1').onclick=()=>startRound('r1');
+$('btn-brief2').onclick=winterStart;
+$('btn-brief3').onclick=()=>startRound('r2');
+$('btn-to-cert').onclick=()=>{
+  drawCert();
+  try{
+    localStorage.setItem('swb_cert', JSON.stringify({name:S.name, ending:S._ending, survived:S.survived, date:certDate()}));
+  }catch(e){}
+  show('s-cert');
+};
+$('btn-download').onclick=()=>{
+  drawCert();
+  const a=document.createElement('a');
+  a.download='深圳湾红树林生态学习证书-'+S.name+'.png';
+  a.href=$('certCanvas').toDataURL('image/png');
+  a.click();
+  toast('证书已下载');
+};
+$('btn-share').onclick=async ()=>{
+  const text=`我在《如果我是它》互动科普中完成了人类与黑脸琵鹭的双视角体验（${ENDINGS[S._ending].tag.split('·')[1].trim()}），获得了深圳湾红树林生态学习证书。2025年，全球只剩 7,081 只黑脸琵鹭——如果我是它，我需要什么？`;
+  try{
+    if(navigator.share){ await navigator.share({title:'深圳湾红树林生态学习证书', text}); }
+    else{ await navigator.clipboard.writeText(text); toast('分享文案已复制'); }
+  }catch(e){}
+};
+$('btn-home').onclick=()=>{ goHome(); };
+
+function goHome(){
+  let cert=null;
+  try{ cert=JSON.parse(localStorage.getItem('swb_cert')); }catch(e){}
+  if(cert){
+    $('home-welcome').textContent=`欢迎回来，${cert.name}\n你已获得学习证书，想要重新体验吗？`;
+    setArt('home-art','home');
+    show('s-home');
+  }else{
+    setArt('intro-art','intro');
+    show('s-intro');
+  }
+}
+$('btn-replay').onclick=()=>{
+  S.r1=[null,null,null,null,null]; S.r2=[null,null,null,null,null];
+  S.hp=60; S.safety=80; S.survived=true; S._deathShown=false;
+  setArt('intro-art','intro');
+  show('s-intro');
+};
+$('btn-view-cert').onclick=()=>{
+  let cert=null;
+  try{ cert=JSON.parse(localStorage.getItem('swb_cert')); }catch(e){}
+  if(!cert){ goHome(); return; }
+  S.name=cert.name; S._ending=cert.ending; S.survived=cert.survived;
+  drawCert();
+  show('s-cert');
+};
+
+/* 启动 */
+goHome();
+</script>
+</body>
+</html>
