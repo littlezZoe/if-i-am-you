@@ -91,6 +91,12 @@
     white-space:pre-line;
   }
   .hint2.show{display:block;animation:fadein .8s both}
+    .tap-hint{display:none;margin-top:24px;font-size:13px;color:var(--ink-soft);letter-spacing:.3em;animation:pulse2 1.6s ease-in-out infinite}
+  .tap-hint.on{display:block}
+  @keyframes pulse2{0%,100%{opacity:.4}50%{opacity:1}}
+  #event-actions .choice{width:100%;max-width:430px;text-align:left;display:flex;flex-direction:column;gap:3px;padding:12px 20px}
+  #event-actions .choice .ct{font-size:16px;letter-spacing:.05em}
+  #event-actions .choice .cs{font-size:12.5px;color:var(--ink-soft)}
   /* ============ HUD ============ */
   #hud{position:fixed;top:0;left:0;right:0;z-index:50;display:none;
     justify-content:space-between;align-items:flex-start;
@@ -216,6 +222,7 @@
       <div id="d-react-art" class="scene-art" data-page-node-id="sgwoNkfpVjaaPQlELzL2Rx"></div>
       <div class="rline" id="d-react-line" data-page-node-id="3CBWSwP4QCubTSxN56O3Jy"></div>
       <div class="rnote" id="d-react-note" data-page-node-id="5Li2YgAJN4ILuaNMBYK1YL"></div>
+      <div class="tap-hint" id="d-react-tap">轻触屏幕任意位置 · 继续</div>
     </div>
     <div class="hint2" id="d-hint" data-page-node-id="bnTWusT9AZOAiEF7edWiw4"></div>
   </section>
@@ -233,6 +240,7 @@
 
   <!-- 琵鹭事件页 -->
   <section class="screen" id="s-event" data-page-node-id="WTdoMfxN2a70dEWeCaT4kS">
+    <div id="journey" data-page-node-id="JRNstart"></div>
     <div class="scene-art" id="event-art" data-page-node-id="ibjXYdVZm7LRWlo9QEJjtB"></div>
     <div class="event-lines" id="event-lines" data-page-node-id="f7zcF3bQeuyFfsLj7OBZXE"></div>
     <div id="event-extra" style="width:100%;max-width:560px;text-align:center" data-page-node-id="VRzhPDmCLdXGdjPpcFos5h"></div>
@@ -288,68 +296,70 @@ const DECISIONS = [
     title:"周末的鱼塘",
     desc:"你小区旁边那片老鱼塘地块要改造了，社区议事会正在征求居民意见。",
     opts:[
-      {t:"建成商业综合体", s:"更多店铺、更热闹，周末有地方逛", good:false, art:"cBuild"},
-      {t:"保留成生态鱼塘公园", s:"留下水面和滩涂，少一点喧嚣", good:true, art:"cPond"}
+      {t:"建成商业综合体", s:"更多店铺、更热闹，周末有地方逛", w:-2, art:"cBuild",
+        react:{art:"lostRoost", line:"塔吊的灯亮了一整夜。\n它连夜飞走，去找新的落脚点。"}},
+      {t:"建成滨水商业街，留一小片水塘", s:"看起来也有水有绿化，但人流不会少", w:-1, art:"cStreet",
+        react:{art:"lostRoost", line:"水塘太小，人声离得太近。\n它盘旋了三圈，没有落下去。"}},
+      {t:"保留成生态鱼塘公园", s:"水面和滩涂都留下，限制人流", w:2, art:"cPond",
+        react:{art:"safeRoost", line:"夜里，它有了一个安静的落脚点。"}}
     ],
-    hint:"琵鹭视角中——\n那次表决之后，它连夜离开了消失的夜栖地。",
-    react:{
-      bad:{art:"lostRoost", line:"塔吊的灯亮了一整夜。\n它连夜飞走，去找新的落脚点。"},
-      good:{art:"safeRoost", line:"夜里，它有了一个安静的落脚点。"}
-    }
+    hint:"琵鹭视角中——\n那次表决之后，它的夜栖地出了问题。"
   },
   {
     title:"周末去湾边",
     desc:"难得的好天气，你去深圳湾看鸟。滩涂上正落着一群黑脸琵鹭。",
     opts:[
-      {t:"翻过围栏走近拍照", s:"能拍到更清楚的照片", good:false, art:"cTourists"},
-      {t:"在观鸟屋安静观察", s:"隔开一段距离，用镜头拉远", good:true, art:"cHide"}
+      {t:"翻过围栏走近拍照", s:"能拍到更清楚的照片", w:-2, art:"cTourists",
+        react:{art:"encounter", line:"太近了——扑棱！\n它被惊起，飞走了。"}},
+      {t:"蹲在滩涂边投喂面包", s:"你觉得这样是在帮它", w:-1, art:"cFeed",
+        react:{art:"encounter", line:"面包屑落在滩涂上。\n它犹豫着凑近——那不是它的食物。"}},
+      {t:"在观鸟屋安静观察", s:"隔开一段距离，用镜头拉远", w:2, art:"cHide",
+        react:{art:"forageClean", line:"隔着围栏，它低头觅食，没有被打扰。"}}
     ],
-    hint:"琵鹭视角中——\n你走近的那一次，它吓得丢下满嘴的食物。",
-    react:{
-      bad:{art:"encounter", line:"太近了——扑棱！\n它被惊起，飞走了。"},
-      good:{art:"forageClean", line:"隔着围栏，它低头觅食，没有被打扰。"}
-    }
+    hint:"琵鹭视角中——\n有人靠近的每一次，它都得丢下食物逃开。"
   },
   {
     title:"滩涂上的渔网",
     desc:"傍晚散步，你在滩涂边看到一张被丢弃的废渔网，半浸在水里。",
     opts:[
-      {t:"与我无关，走开", s:"反正会有专人处理", good:false, art:"cNet"},
-      {t:"拍照上报回收志愿者", s:"顺手的事，一分钟就好", good:true, art:"cReport"}
+      {t:"与我无关，走开", s:"反正会有专人处理", w:-2, art:"cNet",
+        react:{art:"netWater", line:"水很平静。\n水下的那张网，它看不见。"}},
+      {t:"拍张照发到群里，问问是谁的", s:"发完消息，继续散步", w:-1, art:"cPhone",
+        react:{art:"netWater", line:"群里没人回复。\n那张网还在水里，等着。"}},
+      {t:"拍照上报回收志愿者", s:"顺手的事，一分钟就好", w:2, art:"cReport",
+        react:{art:"boatNet", line:"几天后，有人把那张网捞走了。"}}
     ],
-    hint:"琵鹭视角中——\n水下那团看不见的网，差点让它再也飞不起来。",
-    react:{
-      bad:{art:"netWater", line:"水很平静。\n水下的那张网，它看不见。"},
-      good:{art:"boatNet", line:"几天后，有人把那张网捞走了。"}
-    }
+    hint:"琵鹭视角中——\n水下那团看不见的网，差点让它再也飞不起来。"
   },
   {
-    title:"大扫除的废水",
-    desc:"周末大扫除，家里攒下一桶换下来的清洁废水。",
+    title:"晚饭后的半锅油汤",
+    desc:"晚饭后收拾桌子，锅里剩了半锅油汤和菜渣。\n楼下路边就有一个雨水篦子。",
     opts:[
-      {t:"倒进路边雨水篦子", s:"最方便，反正没人看见", good:false, art:"cDrain"},
-      {t:"提到指定收集点", s:"多走十分钟，图个心安", good:true, art:"cDrop"}
+      {t:"连汤带油倒进雨水篦子", s:"离家最近，几步路的事", w:-2, art:"cDrain",
+        react:{art:"forageMurky", line:"顺着雨水管，油汤直接进了海湾。\n它扫了一整天，喙里全是泥。"}},
+      {t:"倒进马桶冲走", s:"反正最后都是进下水道", w:-1, art:"cToilet",
+        react:{art:"forageMurky", line:"马桶通向污水管。\n但突然多出来的油，处理厂也吃不消。"}},
+      {t:"汤水滤渣进水槽，剩菜进厨余", s:"厨房污水会先送去处理厂", w:2, art:"cSink",
+        react:{art:"forageClean", line:"退潮后，滩涂里的鱼多得很。"}}
     ],
-    hint:"琵鹭视角中——\n那片滩涂的水变浑了，鱼越来越少。",
-    react:{
-      bad:{art:"forageMurky", line:"顺着雨水管，脏水进了海湾。\n它扫了一整天，喙里全是泥。"},
-      good:{art:"forageClean", line:"退潮后，滩涂里的鱼多得很。"}
-    }
+    hint:"琵鹭视角中——\n雨水篦子直通海湾，那片滩涂的水变浑了。"
   },
   {
     title:"凌晨的邀请",
     desc:"志愿者群里招募人手：下周清晨的黑脸琵鹭全球同步调查，要早起。",
     opts:[
-      {t:"起不来，算了吧", s:"少我一个不影响什么", good:false, art:"cSleep"},
-      {t:"报名参加", s:"观鸟屋需要更多双眼睛", good:true, art:"cWatch"}
+      {t:"起不来，把闹钟按掉了", s:"少我一个不影响什么", w:-2, art:"cSleep",
+        react:{art:"nightSil", line:"那个清晨，观测记录少了一页。\n没有人数它。"}},
+      {t:"报了名，但睡过了头", s:"心里想去，身体很诚实", w:-1, art:"cSnooze",
+        react:{art:"nightSil", line:"观测点等了她二十分钟。\n少一双眼睛，就少一片滩涂被看见。"}},
+      {t:"报名了，迟到了一小时", s:"赶了个尾巴，帮忙记了些数据", w:1, art:"cWatch",
+        react:{art:"watch", line:"那个清晨，有一双眼睛\n记下了一部分数字。"}},
+      {t:"早早到场，全程帮忙记录", s:"观鸟屋需要更多双眼睛", w:2, art:"cWatch",
+        react:{art:"watch", line:"那个清晨，有一双眼睛\n记下了关于它的每一个数字。"}}
     ],
-    hint:"琵鹭视角中——\n有人的地方，才有人为它说话。",
-    react:{
-      bad:{art:"nightSil", line:"那个清晨，观测记录少了一页。\n没有人数它。"},
-      good:{art:"watch", line:"那个清晨，有一双眼睛\n记下了关于它的每一个数字。"}
-    }
+    hint:"琵鹭视角中——\n有人的地方，才有人为它说话。"
   }
-];
+]
 
 /* 结局文案 */
 const ENDINGS = {
@@ -569,6 +579,70 @@ const ART = {
     <path d="M64 46 L74 50" stroke="${C.ink}" stroke-width="4"/>
     <g transform="translate(120,44) scale(.3)">${birdStanding()}</g>
   </svg>`;},
+  cStreet(){ return `<svg viewBox="0 0 160 110">
+    <rect x="0" y="0" width="160" height="110" fill="#e9e4d6"/>
+    <path d="M20 66 L140 66" stroke="${C.greyD}" stroke-width="2.5"/>
+    <rect x="22" y="26" width="34" height="40" fill="#d8d2c2" stroke="${C.greyD}" stroke-width="2"/>
+    <path d="M22 26 L39 16 L56 26 Z" fill="${C.roof}" opacity=".8"/>
+    <rect x="66" y="34" width="30" height="32" fill="#d8d2c2" stroke="${C.greyD}" stroke-width="2"/>
+    <path d="M66 34 L81 24 L96 34 Z" fill="${C.roof}" opacity=".65"/>
+    <path d="M28 36 L50 36 M28 46 L50 46 M72 44 L90 44 M72 54 L90 54" stroke="${C.greyD}" stroke-width="1.5"/>
+    <rect x="104" y="52" width="42" height="14" fill="${C.water}" stroke="${C.waterD}" stroke-width="1.5"/>
+    <path d="M108 59 q8 -3 16 0 t16 0" stroke="${C.waterD}" stroke-width="1.2" fill="none"/>
+    <path d="M20 88 L140 88" stroke="${C.greyD}" stroke-width="2"/>
+    <circle cx="118" cy="82" r="3" fill="#e8b48f" stroke="${C.ink}" stroke-width="1.2"/>
+    <path d="M118 85 L118 92 M118 87 L114 91 M118 87 L122 91" stroke="${C.ink}" stroke-width="1.4" fill="none"/>
+  </svg>`;},
+  cFeed(){ return `<svg viewBox="0 0 160 110">
+    <rect x="0" y="0" width="160" height="110" fill="#e9e4d6"/>
+    <rect x="0" y="70" width="160" height="40" fill="${C.mud}"/>
+    <path d="M36 16 q12 10 28 10 q16 0 26 -12" stroke="${C.ink}" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <path d="M64 26 L64 40 M64 40 L58 34 M64 40 L70 34" stroke="${C.ink}" stroke-width="2.2" fill="none"/>
+    <ellipse cx="66" cy="52" rx="4" ry="2" fill="#d9b97c"/>
+    <ellipse cx="84" cy="58" rx="4" ry="2" fill="#d9b97c"/>
+    <ellipse cx="58" cy="60" rx="4" ry="2" fill="#d9b97c"/>
+    <g transform="translate(94,42) scale(.42)">${birdStanding()}</g>
+  </svg>`;},
+  cPhone(){ return `<svg viewBox="0 0 160 110">
+    <rect x="0" y="0" width="160" height="110" fill="#e9e4d6"/>
+    <rect x="0" y="66" width="160" height="44" fill="${C.deep}"/>
+    <path d="M28 66 C38 80 56 86 76 82 C96 78 112 84 122 94" stroke="${C.greyD}" stroke-width="2" fill="none"/>
+    <path d="M50 80 L58 70 L66 82 L76 68 L86 82 M42 78 L96 80" stroke="${C.greyD}" stroke-width="1.4" fill="none"/>
+    <circle cx="104" cy="30" r="9" fill="#e8b48f" stroke="${C.ink}" stroke-width="1.5"/>
+    <path d="M104 39 L104 68 M104 46 L114 54 M104 68 L96 88 M104 68 L112 88" stroke="${C.ink}" stroke-width="2" fill="none"/>
+    <rect x="112" y="42" width="13" height="21" rx="2.5" fill="#fdfdf7" stroke="${C.ink}" stroke-width="1.5"/>
+    <path d="M115 47 L122 47 M115 52 L122 52 M115 57 L119 57" stroke="${C.greyD}" stroke-width="1.2"/>
+  </svg>`;},
+  cToilet(){ return `<svg viewBox="0 0 160 110">
+    <rect x="0" y="0" width="160" height="110" fill="#e8eef0"/>
+    <rect x="52" y="14" width="40" height="28" rx="4" fill="#fdfdf7" stroke="${C.ink}" stroke-width="2"/>
+    <path d="M60 42 L96 42 L92 70 Q86 84 74 84 L74 92 L58 92 L58 82" fill="#fdfdf7" stroke="${C.ink}" stroke-width="2"/>
+    <ellipse cx="76" cy="52" rx="15" ry="6.5" fill="#d4d1c4" stroke="${C.ink}" stroke-width="1.5"/>
+    <path d="M72 55 q4 12 10 24" stroke="#a8a074" stroke-width="2.5" fill="none" stroke-dasharray="4 3"/>
+    <path d="M118 26 q9 -8 18 0 M118 40 q9 -8 18 0" stroke="${C.greyD}" stroke-width="1.6" fill="none"/>
+  </svg>`;},
+  cSink(){ return `<svg viewBox="0 0 160 110">
+    <rect x="0" y="0" width="160" height="110" fill="#e8eef0"/>
+    <path d="M30 40 L110 40 L102 80 L38 80 Z" fill="#fdfdf7" stroke="${C.ink}" stroke-width="2"/>
+    <rect x="62" y="18" width="6" height="16" fill="${C.greyD}"/>
+    <path d="M56 18 L74 18" stroke="${C.greyD}" stroke-width="4" stroke-linecap="round"/>
+    <path d="M52 58 L88 58" stroke="${C.greyD}" stroke-width="1.6"/>
+    <circle cx="62" cy="54" r="2.5" fill="#8f8c62"/><circle cx="72" cy="51" r="2" fill="#8f8c62"/>
+    <rect x="114" y="46" width="30" height="40" fill="#5f8a68" stroke="${C.ink}" stroke-width="1.8"/>
+    <path d="M122 46 L122 38 L136 38 L136 46" fill="none" stroke="${C.ink}" stroke-width="1.8"/>
+    <path d="M122 58 L134 58 M122 66 L134 66 M122 74 L134 74" stroke="#fdfdf7" stroke-width="2"/>
+    <path d="M96 76 C104 72 110 66 114 60" stroke="${C.greyD}" stroke-width="1.6" fill="none" stroke-dasharray="3 3"/>
+  </svg>`;},
+  cSnooze(){ return `<svg viewBox="0 0 160 110">
+    <rect x="0" y="0" width="160" height="110" fill="${C.night}" opacity=".92"/>
+    <circle cx="124" cy="26" r="12" fill="#e9e2c8"/>
+    <circle cx="42" cy="34" r="13" fill="#fdfdf7" stroke="${C.ink}" stroke-width="2"/>
+    <path d="M42 27 L42 34 L48 38" stroke="${C.ink}" stroke-width="2" fill="none"/>
+    <path d="M30 22 L24 16 M54 22 L60 16" stroke="${C.ink}" stroke-width="2.5"/>
+    <rect x="76" y="48" width="64" height="32" rx="6" fill="#5a6572" stroke="#3a4652" stroke-width="2"/>
+    <path d="M76 58 q32 9 64 0" stroke="#3a4652" stroke-width="2" fill="none"/>
+    <path d="M86 64 q6 -4 12 0 M100 68 q6 -4 12 0" stroke="#8b958f" stroke-width="1.6" fill="none"/>
+  </svg>`;},
 
   /* —— 决策舞台背景（含飞入的琵鹭） —— */
   stagePond(){ return `<svg viewBox="0 0 400 220">
@@ -597,16 +671,20 @@ const ART = {
     <path d="M280 162 L294 140 L310 160 L326 138 L342 162 M272 152 L352 156" stroke="${C.greyD}" stroke-width="1.5" fill="none" opacity=".7"/>
     <g class="flyin">${birdFlying()}</g>
   </svg>`;},
-  stageHome(){ return `<svg viewBox="0 0 400 220">
-    <rect x="0" y="0" width="400" height="150" fill="#eef0e4"/>
-    <rect x="0" y="150" width="400" height="70" fill="${C.mud}"/>
-    <rect x="30" y="60" width="90" height="90" fill="#e4ddc8" stroke="${C.greyD}" stroke-width="2"/>
-    <rect x="30" y="60" width="90" height="24" fill="${C.roof}" opacity=".75"/>
-    <path d="M230 60 q-14 24 0 44 q14 20 0 46" stroke="#b9b28e" stroke-width="5" fill="none"/>
-    <path d="M236 66 q-10 18 0 34" stroke="#a8a074" stroke-width="3" fill="none"/>
+  stageDinner(){ return `<svg viewBox="0 0 400 220">
+    <rect x="0" y="0" width="400" height="150" fill="#efe9dc"/>
+    <rect x="48" y="28" width="78" height="60" fill="#dce8ec" stroke="${C.greyD}" stroke-width="2.5"/>
+    <path d="M87 28 L87 88 M48 58 L126 58" stroke="${C.greyD}" stroke-width="2"/>
+    <rect x="0" y="150" width="400" height="70" fill="#cbb990"/>
+    <ellipse cx="225" cy="160" rx="135" ry="26" fill="#d9c8a2" stroke="${C.greyD}" stroke-width="2"/>
+    <path d="M175 142 C175 122 275 122 275 142 L275 150 L175 150 Z" fill="#9aa3a8" stroke="${C.ink}" stroke-width="2.2"/>
+    <path d="M275 140 L302 130 M302 130 L312 124 M302 130 L312 132" stroke="${C.ink}" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <path d="M200 116 q11 -11 22 0 q11 11 22 0" stroke="#b8b2a2" stroke-width="2.2" fill="none"/>
+    <path d="M330 96 q13 -12 26 0 M180 40 q12 -10 24 0" stroke="#c9c2ae" stroke-width="2" fill="none"/>
     <path d="M0 150 L400 150" stroke="${C.greyD}" stroke-width="2"/>
     <g class="flyin">${birdFlying()}</g>
   </svg>`;},
+
   stageCall(){ return `<svg viewBox="0 0 400 220">
     <rect x="0" y="0" width="400" height="220" fill="${C.night}"/>
     <circle cx="320" cy="44" r="16" fill="#e9e2c8"/>
@@ -628,10 +706,27 @@ const ART = {
     <rect x="0" y="176" width="400" height="44" fill="#b8b2a2"/>
     <path d="M60 176 L60 90 L100 90 L100 176 M140 176 L140 70 L180 70 L180 176 M220 176 L220 104 L260 104 L260 176 M300 176 L300 84 L340 84 L340 176" fill="#c2bcae" stroke="${C.greyD}" stroke-width="2"/>
     <path d="M60 120 L100 120 M60 148 L100 148 M140 100 L180 100 M140 130 L180 130 M220 134 L260 134 M300 116 L340 116" stroke="${C.greyD}" stroke-width="1.5"/>
+    <path d="M68 102 L92 102 M148 84 L172 84 M148 112 L172 112 M228 118 L252 118 M308 98 L332 98" stroke="#fdfdf7" stroke-width="3" opacity=".75"/>
     <path d="M190 30 L240 30 L240 54 L190 54 Z M200 42 L230 42" fill="#e8e2d2" stroke="${C.greyD}" stroke-width="2"/>
     <path d="M250 40 L250 18 L268 18" stroke="${C.crane}" stroke-width="3.5" fill="none"/>
-    <g transform="translate(60,-4) scale(.85)"><g class="flyaway">${birdFlying()}</g></g>
+    <path d="M250 18 L250 6 M243 6 L257 6" stroke="${C.crane}" stroke-width="3" fill="none"/>
+    <path d="M268 18 L298 36" stroke="${C.crane}" stroke-width="2.5" fill="none"/>
+    <rect x="294" y="36" width="11" height="9" fill="#8b958f" stroke="${C.ink}" stroke-width="1.4"/>
+    <g transform="translate(280,126)">
+      <rect x="0" y="18" width="56" height="20" rx="4" fill="#c9a15e" stroke="${C.ink}" stroke-width="1.8"/>
+      <path d="M10 18 L10 6 L34 6 L40 18" fill="none" stroke="${C.ink}" stroke-width="1.8"/>
+      <rect x="14" y="9" width="14" height="9" fill="#dce8ec" stroke="${C.ink}" stroke-width="1.4"/>
+      <circle cx="12" cy="42" r="7" fill="none" stroke="${C.ink}" stroke-width="2"/>
+      <circle cx="46" cy="42" r="7" fill="none" stroke="${C.ink}" stroke-width="2"/>
+      <path d="M56 26 L72 20 L76 30 L64 34 Z" fill="#c9a15e" stroke="${C.ink}" stroke-width="1.8"/>
+    </g>
+    <path d="M8 160 L26 168 L8 176 M84 160 L102 168 L84 176 M176 160 L194 168 L176 176" stroke="#a8924e" stroke-width="2.2" fill="none"/>
+    <path d="M8 168 L194 168" stroke="#a8924e" stroke-width="2"/>
+    <circle cx="118" cy="56" r="5" fill="#f2e6b0" stroke="${C.ink}" stroke-width="1.4"/>
+    <path d="M118 61 L118 130" stroke="${C.greyD}" stroke-width="3"/>
+    <path d="M111 54 q-7 -7 0 -14 M125 54 q7 -7 0 -14" stroke="#f2e6b0" stroke-width="2" fill="none" opacity=".8"/>
   </svg>`;},
+
   safeRoost(){ return `<svg viewBox="0 0 400 220">
     <rect x="0" y="0" width="400" height="136" fill="${C.dusk}"/>
     <circle cx="316" cy="44" r="18" fill="#f2ecd2"/>
@@ -650,6 +745,7 @@ const ART = {
   forageMurky(){ return `<svg viewBox="0 0 400 220">
     <rect x="0" y="0" width="400" height="120" fill="#cfc8a8"/>
     ${waterBand(120, '#b3b08a')}
+    ${mangrove(10,120,.75)} ${mangrove(356,122,.65)}
     <path d="M70 150 L96 128 M120 156 L146 134 M170 150 L196 128 M220 156 L246 134" stroke="#8f8c62" stroke-width="1.8"/>
     <g transform="translate(100,10)">${birdStanding()}</g>
     <path d="M300 70 L344 86 M308 52 L350 68" stroke="#8f8c62" stroke-width="2"/>
@@ -667,12 +763,20 @@ const ART = {
       <path d="M50 32 L66 32 L64 46 L52 46 Z" fill="#5f8a68"/>
       <circle cx="94" cy="58" r="9" fill="#c9b18a" stroke="${C.ink}" stroke-width="1.6"/>
       <path d="M94 67 L91 84 M94 67 L100 84 M103 56 q10 -4 10 4 q0 7 -10 5" stroke="${C.ink}" stroke-width="2.2" fill="none"/>
+      <g transform="translate(116,50)">
+        <ellipse cx="0" cy="26" rx="13" ry="8" fill="#c9b18a" stroke="${C.ink}" stroke-width="1.6"/>
+        <circle cx="11" cy="17" r="6.5" fill="#c9b18a" stroke="${C.ink}" stroke-width="1.6"/>
+        <path d="M15 15 q6 -1 7 3 q-4 2 -7 0 Z" fill="#8b7a5c" stroke="${C.ink}" stroke-width="1.2"/>
+        <path d="M-9 32 L-9 40 M7 32 L7 40 M-13 40 L-5 40 M3 40 L11 40" stroke="${C.ink}" stroke-width="1.6"/>
+        <path d="M-11 21 q-7 -3 -9 -10" stroke="${C.ink}" stroke-width="1.6" fill="none"/>
+      </g>
     </g>
     <g transform="translate(20,-6)"><g class="startle">${birdFlying()}</g></g>
   </svg>`;},
   netWater(){ return `<svg viewBox="0 0 400 220">
     <rect x="0" y="0" width="400" height="130" fill="${C.sky}"/>
     ${waterBand(130, C.deep)}
+    ${mangrove(14,130,.7)} ${mangrove(352,132,.6)}
     <path d="M90 130 C100 160 130 174 170 168 C210 162 240 170 256 186" stroke="${C.greyD}" stroke-width="2.2" fill="none"/>
     <path d="M110 172 L126 146 L146 168 L166 140 L186 168 L206 146 L226 172 M100 158 L248 162 M112 190 L236 190" stroke="${C.greyD}" stroke-width="1.6" fill="none" opacity=".8"/>
     <path d="M60 96 q10 -10 20 0" stroke="${C.ink}" stroke-width="1.5" fill="none" opacity=".5"/>
@@ -720,6 +824,28 @@ const ART = {
     <g transform="translate(240,60) scale(.55)"><g class="bob">${birdStanding()}</g></g>
   </svg>`;},
   /* —— 结局场景 —— */
+  thaw(){ return `<svg viewBox="0 0 400 220">
+    <rect x="0" y="0" width="400" height="130" fill="#e6eff0"/>
+    <circle cx="322" cy="40" r="18" fill="#f4e3b8"/>
+    ${waterBand(130,'#cfe3dc')}
+    ${mangrove(24,130,.85)} ${mangrove(332,132,.75)}
+    <path d="M60 152 L92 148 M148 160 L184 156 M244 154 L276 150" stroke="#fdfdf7" stroke-width="2.5" opacity=".8"/>
+    <g transform="translate(96,12)">${birdStanding()}</g>
+    <path d="M120 60 q11 -10 22 0 M262 52 q10 -9 20 0" stroke="${C.ink}" stroke-width="1.5" fill="none" opacity=".6"/>
+  </svg>`;},
+  newsPress(){ return `<svg viewBox="0 0 400 220">
+    <rect x="0" y="0" width="400" height="220" fill="#eceadf"/>
+    <g transform="rotate(-3 200 110)">
+      <rect x="70" y="30" width="260" height="160" fill="#fdfdf7" stroke="${C.ink}" stroke-width="2.5"/>
+      <path d="84 52 L236 52" stroke="${C.ink}" stroke-width="7"/>
+      <path d="84 64 L180 64" stroke="${C.greyD}" stroke-width="2.5"/>
+      <path d="M84 84 L186 84 M84 96 L186 96 M84 108 L186 108 M84 120 L160 120" stroke="${C.greyD}" stroke-width="1.6"/>
+      <rect x="204" y="84" width="108" height="66" fill="#eef1ea" stroke="${C.greyD}" stroke-width="1.8"/>
+      <g transform="translate(214,94) scale(.3)">${birdStanding()}</g>
+      <path d="M84 144 L186 144 M84 156 L186 156" stroke="${C.greyD}" stroke-width="1.4"/>
+      <path d="M204 164 L312 164 M84 168 L312 168" stroke="${C.greyD}" stroke-width="1.4"/>
+    </g>
+  </svg>`;},
   awaken(){ return `<svg viewBox="0 0 400 220">
     <defs><linearGradient id="gd" x1="0" x2="1">
       <stop offset="0" stop-color="#4a5560"/><stop offset="1" stop-color="#d9ebee"/>
@@ -772,13 +898,14 @@ function toast(msg){
 }
 function setArt(id,name){ $(id).innerHTML = ART[name] ? ART[name]() : ''; }
 /* 判断第 i 个决策的选择是否为好选项（统一走数据，杜绝索引错位） */
-const isGood = (round,i) => DECISIONS[i].opts[S[round][i]].good;
+const isGood = (round,i) => DECISIONS[i].opts[S[round][i]].w>0;
+const wOf = (round,i) => DECISIONS[i].opts[S[round][i]].w;
 
 /* =========================================================
    决策流程：动画场景 → 选项浮现 → 琵鹭反应 → 下一个
 ========================================================= */
 let reactTimer=null;
-const STAGE_SCENES=['stagePond','stageBay','stageBeach','stageHome','stageCall'];
+const STAGE_SCENES=['stagePond','stageBay','stageBeach','stageDinner','stageCall'];
 function startRound(round){
   S.round = round; S.q = 0;
   show('s-decision');
@@ -794,6 +921,8 @@ function renderDecision(){
   $('d-opts').style.display='';
   $('d-desc').style.display='';
   clearTimeout(reactTimer);
+  document.removeEventListener('pointerdown',tapNext);
+  $('d-react-tap').classList.remove('on');
 
   /* 舞台：彩色场景 + 琵鹭飞入 */
   $('d-stage').innerHTML = ART[STAGE_SCENES[S.q]]();
@@ -820,24 +949,85 @@ function renderDecision(){
 function choose(i){
   const d = DECISIONS[S.q];
   S[S.round][S.q]=i;
-  /* 琵鹭的反应动画 + 一句短文字 */
-  const r = d.react[ d.opts[i].good ? 'good' : 'bad' ];
+  const o=d.opts[i];
+  /* 琵鹭的反应动画 + 一句短文字，点击任意位置继续 */
   $('d-opts').style.display='none';
   $('d-desc').style.display='none';
-  $('d-stage').innerHTML = ART[r.art]();
+  fadeStage(ART[o.react.art]());
   $('d-react').classList.add('on');
-  $('d-react-line').textContent = r.line;
+  $('d-react-line').textContent = o.react.line;
   $('d-react-note').textContent = S.round==='r2'
     ? (S.r1[S.q]!==i ? '决策已修改' : '保持原决策') : '';
-  /* 反应动画结束后自动进入下一个 */
+  $('d-react-tap').classList.add('on');
   clearTimeout(reactTimer);
-  reactTimer=setTimeout(()=>{ $('d-react').classList.remove('on'); nextDecision(); }, 3400);
+  reactTimer=setTimeout(()=>{ document.addEventListener('pointerdown',tapNext,{once:true}); },450);
+}
+function tapNext(){
+  document.removeEventListener('pointerdown',tapNext);
+  $('d-react-tap').classList.remove('on');
+  $('d-react').classList.remove('on');
+  nextDecision();
 }
 function nextDecision(){
   S.q++;
-  if(S.q<5){ renderDecision(); }
+  if(S.q<5){
+    if(S.round==='r2'){ showNews(S.q-1, ()=>renderDecision()); }
+    else{ renderDecision(); }
+  }
   else if(S.round==='r1'){ show('s-brief2'); }
-  else { finishStory(); }
+  else { showNews(S.q-1, finishStory); }
+}
+
+/* =========================================================
+   真实新闻剪影（第二回合：每个选择之后翻开一份）
+   来源均已核实，可点击查看原报道
+========================================================= */
+const NEWS=[
+  { date:'2002 年 12 月 — 2003 年 1 月',
+    title:'73 只黑脸琵鹭集体中毒死亡，17 只获救',
+    body:`台湾曾文溪口的养殖鱼塭越冬地，黑脸琵鹭分四波相继倒下——\n它们吃了携带肉毒杆菌毒素的腐败鱼蛤。\n事后调查指向鱼塘水质恶化：高温低气压让水中溶氧骤降，\n文蛤大量死亡腐败，毒素顺着食物链进了琵鹭体内。\n\n那一年，全球黑脸琵鹭只有约 1,000 只。\n73 只，相当于全球总数的近 7%。\n受害者也不止琵鹭——鱼和文蛤同样大量死亡。`,
+    src:'公共电视台《我们的岛》· 黑琵之家研究黑面琵鹭中毒事件',
+    url:'http://ourisland.pts.org.tw/content/1394' },
+  { date:'2026 年 9 月 28 日',
+    title:'深圳湾公园强光灯惊扰候鸟，记者调查：暂无处罚依据',
+    body:`有网友发帖反映，深圳湾公园夜间骑行的强远光灯惊扰栖息候鸟。\n而为了不打扰鸟儿，这座公园甚至曾拒绝增设路灯——\n「为鸟熄灯」后来被写进《深圳经济特区红树林湿地保护若干规定》。\n\n深圳还率先明确提出「拒绝投喂」：\n面包饼干看似爱心，实则让候鸟营养不良、\n逐渐丧失野外觅食与迁徙的本能。`,
+    src:'深圳新闻网 · 深圳湾公园被曝单车强光扰民惊候鸟',
+    url:'https://www.sznews.com/news/content/2026-09/28/content_32182119.htm' },
+  { date:'2026 年 4 月 11 日',
+    title:'黑面琵鹭遭钓鱼线缠绕受困多日，送医不治',
+    body:`苗栗西湖溪湿地，一只北返途中的黑面琵鹭被发现趴卧在地——\n嘴喙和脚部被多种钓鱼线、渔网线缠住，已奄奄一息。\n救援人员到场移除鱼线送医，当晚仍因衰竭过重死亡。\n\n县方呼吁：切勿随意丢弃渔网、鱼线，\n「这些看似不起眼的行为，可能对野生动物造成致命的威胁。」`,
+    src:'公视新闻网 · 黑面琵鹭受困苗栗西湖湿地',
+    url:'https://news.pts.org.tw/article/803734' },
+  { date:'2025 年 1 月 10 日',
+    title:'深圳湾赤潮持续数周：这片海常年「劣四类」水质',
+    body:`2024 年 12 月 19 日起，球形棕囊藻赤潮在深圳湾持续暴发，\n海面呈大片黄褐色斑块。官方通报：\n深圳湾海水因氮磷营养盐长期超标，常年处于劣四类水质——\n生活污水正是营养盐的重要来源。\n\n历史上并不只有鸟受害：\n2007 年 8 月，深圳湾红树林海岸曾出现死鱼绵延近 1 公里，\n海水暗红发臭，鱼虾贝类因缺氧和毒素大量死亡。`,
+    src:'深圳特区报 · 深圳海域赤潮暂未见影响鱼类及候鸟',
+    url:'https://www.toutiao.com/article/7458284246172549647/' },
+  { date:'2025 年 4 月 2 日',
+    title:'全球黑脸琵鹭同步普查：7,081 只，首次突破 7,000',
+    body:`由香港观鸟会统筹的全球同步普查公布：\n黑脸琵鹭全球 7,081 只——而上世纪 80 年代末，\n这个数字只有 288 只。后海湾（含香港及深圳）录得 328 只。\n\n数字背后是 30 年的保育，也是一双双普通人的眼睛：\n2026 年普查再创新高 7,746 只，IUCN 等级降为「易危」。\n而 2020 年，深圳湾航道疏浚工程正是被网友发现\n环评报告抄袭造假（通篇 35 处「湛江」）而被叫停——\n每一次关注和上报，都不是没有用的。`,
+    src:'新华社 / 深圳政府在线 · 黑脸琵鹭全球数量突破七千只',
+    url:'https://www.sz.gov.cn/cn/xxgk/zfxxgj/tpxw/content/post_12111512.html' }
+];
+function showNews(i,next){
+  $('hud').classList.remove('on');
+  $('journey').classList.remove('on');
+  setArt('event-art','newsPress');
+  const n=NEWS[i];
+  $('event-lines').innerHTML=`你做出了第 ${i+1} 个选择。\n<span class="fx">这不是虚构——在真实世界里，同样的事一直在发生。</span>`;
+  $('event-extra').innerHTML=`<div class="news-card">
+    <div class="news-tag">真实事件剪影 · REAL NEWS</div>
+    <div class="news-date">${n.date}</div>
+    <div class="news-title">${n.title}</div>
+    <div class="news-body">${n.body}</div>
+    <div class="news-src">来源：<a href="${n.url}" target="_blank" rel="noopener">${n.src}</a></div>
+  </div>`;
+  $('event-actions').innerHTML='';
+  const b=document.createElement('button'); b.className='btn';
+  b.textContent = i<4 ? '下一个选择' : '看看结局';
+  b.onclick=next;
+  $('event-actions').appendChild(b);
+  show('s-event');
 }
 
 /* =========================================================
@@ -888,6 +1078,27 @@ function eventView(art, lines, actions){
   });
 }
 
+/* —— 选择环节：琵鹭自己做决定 —— */
+function choiceView(lines, options){
+  $('event-lines').innerHTML = lines;
+  $('event-extra').innerHTML='';
+  const act=$('event-actions'); act.innerHTML='';
+  options.forEach(o=>{
+    const b=document.createElement('button');
+    b.className='btn choice';
+    b.innerHTML=`<span class="ct">${o.t}</span><span class="cs">${o.s}</span>`;
+    b.onclick=()=>{
+      const r=o.fn();
+      if(r.art) setArt('event-art',r.art);
+      $('event-lines').innerHTML=r.line;
+      act.innerHTML='';
+      const c=document.createElement('button'); c.className='btn'; c.textContent='继续'; c.onclick=runNext;
+      act.appendChild(c);
+    };
+    act.appendChild(b);
+  });
+}
+
 function winterStart(){
   S._deathShown=false;
   const queue=[];
@@ -896,110 +1107,163 @@ function winterStart(){
     `2024 年 10 月 15 日，清晨。\n\n经过数千公里的飞行，\n你——一只黑脸琵鹭，终于抵达深圳湾。\n\n你要在这里度过整个冬天，\n攒够体力，明年春天才能北归繁殖。\n\n你的生存，取决于这里的环境，\n以及……这座城市里无数普通人的选择。`,
     [['继续',runNext]]));
   /* 决策1：夜栖地（鱼塘投票） */
-  if(isGood('r1',0)){
+  const w0=wOf('r1',0);
+  if(w0>=1){
     queue.push(()=>{ hpDelta(15); safetyDelta(20);
       eventView('safeRoost',
       `你发现了一片安静的鱼塘——\n水浅，鱼多，几乎没有干扰。\n\n这里将成为你整个冬天的夜栖地。\n<span class="fx">体力 +15 ｜ 安全度上升</span>`,
       [['继续',runNext]]); });
   }else{
-    queue.push(()=>{ hpDelta(-15); safetyDelta(-30);
+    const lost = w0<=-2;
+    queue.push(()=>{ hpDelta(lost?-15:-8); safetyDelta(lost?-30:-15);
       eventView('lostRoost',
-      `你常去的那片鱼塘，消失了。\n\n围栏立了起来，机器日夜轰鸣。\n你必须连夜寻找新的夜栖地，\n在陌生的地方，警惕每一处阴影。\n<span class="fx bad">体力 -15 ｜ 安全度大幅下降</span>`,
+      lost
+        ? `你常去的那片鱼塘，消失了。\n\n围栏立了起来，机器日夜轰鸣。\n你必须连夜寻找新的夜栖地。\n<span class="fx bad">体力 -15 ｜ 安全度大幅下降</span>`
+        : `你常去的那片鱼塘，被改成了热闹的商业街。\n剩下的水面又小又吵，落不下去。\n\n你得重新找地方。\n<span class="fx bad">体力 -8 ｜ 安全度下降</span>`,
       [['继续',runNext]]); });
+    /* 琵鹭的选择：今晚睡哪 */
+    queue.push(roostChoice);
   }
-  /* 觅食（决策4：废水） */
-  if(isGood('r1',3)){
-    queue.push(()=>forageGame(true));
-  }else{
-    queue.push(()=>forageGame(false));
-  }
-  /* 游客（决策2：周末观鸟） */
-  if(isGood('r1',1)){
+  /* 决策4：水质 → 琵鹭选择觅食地点 */
+  queue.push(()=>{ setJourney(2); forageChoice(); });
+  /* 决策2：游客 */
+  const w1=wOf('r1',1);
+  if(w1>=1){
     queue.push(()=>{ hpDelta(10); safetyDelta(20);
       eventView('forageClean',
       `滩涂边有围栏和隐蔽的观鸟屋。\n人们在远处静静观察，没有人打扰你。\n\n你可以安安心心，把长喙扫进水里。\n<span class="fx">体力 +10 ｜ 安全度上升</span>`,
       [['继续',runNext]]); });
   }else{
-    queue.push(()=>escapeGame(0));
-    queue.push(()=>escapeGame(1));
-    queue.push(()=>escapeGame(2));
+    const n = w1<=-2 ? 3 : 2;
+    for(let i=0;i<n;i++) queue.push(()=>escapeGame(i,n));
   }
-  /* 渔网（决策3） */
-  if(!isGood('r1',2)){
-    queue.push(()=>netGame());
-  }else{
+  /* 决策3：渔网 */
+  const w2=wOf('r1',2);
+  if(w2>=1){
     queue.push(()=>{ hpDelta(5);
       eventView('boatNet',
       `这片水域不久前有人清理过。\n没有看不见的网，没有藏起来的地笼。\n\n你几乎忘了危险是什么感觉。\n<span class="fx">体力 +5</span>`,
       [['继续',runNext]]); });
+  }else{
+    queue.push(()=>netGame(w2<=-2));
   }
-  /* 寒潮考验 */
-  queue.push(()=>{
-    if(S.hp>=45){ hpDelta(-8);
-      eventView('storm',
-      `一月，寒潮南下。\n气温骤降，滩涂结了薄冰。\n\n你缩起一条腿，把喙埋进背羽。\n好在秋天攒下的体力，还足够你撑过去。\n<span class="fx bad">体力 -8</span>`,
-      [['继续',runNext]]); }
-    else if(S.hp>0){
-      eventView('storm',
-      `一月，寒潮南下。\n你已经在饥饿和惊吓中消耗了太多。\n\n寒风里，你抖得越来越厉害……\n这个冬天，对你来说格外漫长。`,
-      [['继续',runNext]]); }
-    else runNext();
-  });
+  /* 寒潮 → 琵鹭选择怎么过夜 */
+  queue.push(coldChoice);
   runEvents(queue);
 }
 
-/* 觅食小游戏 */
-function forageGame(clean){
-  setArt('event-art', clean?'forageClean':'forageMurky');
-  $('event-lines').innerHTML = clean
+/* 夜栖地选择 */
+function roostChoice(){
+  choiceView(`天快黑了，工地还没有停。\n今晚，睡在哪里？`,[
+    {t:"飞去远处安静的滩涂", s:"要多飞一段夜路，但那里没有人",
+      fn:()=>{ hpDelta(-5); safetyDelta(12);
+        return {art:'safeRoost', line:`你摸黑飞了很远，终于落在一片安静的水面。\n翅膀很酸，但至少，没有人声。\n<span class="fx">体力 -5 ｜ 安全度上升</span>`}; }},
+    {t:"落在旁边的高压线塔上", s:"近，省力，但铁塔冷得扎脚",
+      fn:()=>{ hpDelta(-2); safetyDelta(-5);
+        return {art:'lostRoost', line:`你在铁塔上缩了一夜。\n风吹得厉害，天亮时腿脚都僵了。\n<span class="fx bad">体力 -2 ｜ 安全度下降</span>`}; }},
+    {t:"挤进附近的芦苇丛", s:"离工地最近，整夜都是轰鸣",
+      fn:()=>{ hpDelta(-8); safetyDelta(-10);
+        return {art:'nightSil', line:`芦苇丛整夜都在震动。\n你一次次惊醒，天亮时疲惫不堪。\n<span class="fx bad">体力 -8 ｜ 安全度大幅下降</span>`}; }}
+  ]);
+}
+
+/* 觅食地点选择 */
+function forageChoice(){
+  const wq=wOf('r1',3);
+  const q = wq>=1 ? 2 : (wq<=-2 ? 0 : 1);   // 滩涂基础食物丰度
+  choiceView(`潮水退了，到了吃饭的时候。\n今天，去哪里觅食？`,[
+    {t:"开阔的滩涂中央", s:"鱼最多，但四周空旷，无处可躲",
+      fn:()=>{
+        const steps=[];
+        if(wOf('r1',1)<0) steps.push(()=>escapeGame(0,2));
+        steps.push(()=>forageGame(q));
+        QUEUE.splice(QI,0,...steps);
+        return {art: q>=1?'forageClean':'forageMurky',
+          line: q>=1
+            ? `你落在滩涂中央，把长喙扫进水里。\n希望这里没有打扰。\n<span class="fx">开始觅食</span>`
+            : `滩涂中央的水有一股怪味。\n你硬着头皮开始扫喙。\n<span class="fx bad">开始觅食</span>`}; }},
+    {t:"红树林边缘", s:"安静安全，只是鱼少一些",
+      fn:()=>{ safetyDelta(10);
+        const q2=Math.min(q,1);
+        QUEUE.splice(QI,0,()=>forageGame(q2));
+        return {art: q2>=1?'forageClean':'forageMurky',
+          line:`红树替你挡住了风和人影。\n你贴着树影觅食——安心，但收获一般。\n<span class="fx">开始觅食 ｜ 安全度上升</span>`}; }},
+    {t:"排水口附近", s:"常有碎屑漂来，但气味有点不对",
+      fn:()=>{ safetyDelta(-5);
+        const q2 = wq<=-2 ? 0 : Math.max(q,1);
+        QUEUE.splice(QI,0,()=>forageGame(q2));
+        return {art: q2>=1?'forageClean':'forageMurky',
+          line: wq<=-2
+            ? `排水口的水面上浮着一层油花。\n你扫了半天，只捞起一些碎屑。\n<span class="fx bad">开始觅食 ｜ 安全度下降</span>`
+            : `水流带来了不少碎屑，小鱼在附近打转。\n但这里没有遮掩，你得多留神。\n<span class="fx">开始觅食 ｜ 安全度下降</span>`}; }}
+  ]);
+}
+
+/* 觅食小游戏：不停点击觅食，直到吃饱（不显示目标与进度） */
+function forageGame(q){
+  setArt('event-art', q===0?'forageMurky':'forageClean');
+  $('event-lines').innerHTML = q>=2
     ? `潮水退去，滩涂上到处是小鱼小虾。\n把勺状的长喙扫进水里，几乎不会落空。`
-    : `你把长喙扫进水里——水是浑的，气味不对。\n小鱼小虾少得可怜。\n你要花远比从前更多的时间觅食。`;
+    : q===1
+    ? `你把长喙扫进水里。\n有鱼，但不多——要花些工夫。`
+    : `你把长喙扫进水里——水是浑的，气味不对。\n小鱼小虾少得可怜。`;
   $('event-actions').innerHTML='';
   const extra=$('event-extra'); extra.innerHTML='';
+  const conf = q>=2 ? {p:.85,g:5,N:10,tip:'收获不错，这个冬天可以吃得很好。'}
+             : q===1 ? {p:.6,g:4,N:13,tip:'不算丰盛，但省着点吃，也够撑。'}
+                     : {p:.35,g:2,N:16,tip:'这样的效率，远远填不饱肚子。'};
   const log=document.createElement('div'); log.className='mg-log';
   const btn=document.createElement('button'); btn.className='minigame-btn'; btn.textContent='低头觅食';
   extra.appendChild(btn); extra.appendChild(log);
-  let n=0, gained=0;
+  const okLines=['喙尖一挑——一条小鱼！','扫到一只小虾！','泥里翻出一条弹涂鱼！','又一口，吃到了！','长喙横扫，落空一半，但有一口！'];
+  const noLines=['什么也没捞到……','只有一口浑水','泥浆从喙边滑走了','水面晃了晃，什么都没有'];
+  let n=0, gained=0, done=false;
   btn.onclick=()=>{
+    if(done) return;
     n++;
-    if(clean){ hpDelta(5); gained+=5; log.textContent=`找到一条小鱼！体力 +5（${n}/3）`; }
-    else{
-      if(Math.random()<0.45){ hpDelta(3); gained+=3; log.textContent=`捞到一只小虾。体力 +3（${n}/3）`; }
-      else { log.textContent=`什么也没找到……（${n}/3）`; }
-    }
-    if(n>=3){
-      btn.style.display='none';
-      const tip = clean
-        ? `收获不错，这个冬天可以吃得很好。\n<span class="fx">共获得体力 +${gained}</span>`
-        : `这样的效率，远远填不饱肚子。\n<span class="fx">共获得体力 +${gained}（清水滩涂约为三倍）</span>`;
-      $('event-lines').innerHTML += `<br>${tip}`;
+    if(Math.random()<conf.p){ hpDelta(conf.g); gained+=conf.g; log.textContent=okLines[Math.floor(Math.random()*okLines.length)]; }
+    else { log.textContent=noLines[Math.floor(Math.random()*noLines.length)]; }
+    if(n>=conf.N){
+      done=true;
+      btn.style.display='none'; log.textContent='';
+      $('event-lines').innerHTML += `<br>${conf.tip}\n<span class="fx">共获得体力 +${gained}</span>`;
       const c=document.createElement('button'); c.className='btn'; c.textContent='继续'; c.onclick=runNext;
       $('event-actions').appendChild(c);
     }
   };
 }
-/* 飞逃小游戏 */
-function escapeGame(round){
+/* 飞逃小游戏：必须不停快速点击才能在游客追上前飞离 */
+function escapeGame(idx,total){
   setArt('event-art','encounter');
-  $('event-lines').innerHTML = `几个游客翻过围栏，带着狗朝你走来——\n快飞离！`;
+  $('event-lines').innerHTML = `几个游客翻过围栏，带着狗朝你走来——\n不停点击「振翅飞逃」，赶在被追上之前飞离！`;
   $('event-actions').innerHTML='';
   const extra=$('event-extra'); extra.innerHTML='';
   const tb=document.createElement('div'); tb.className='timerbar'; tb.innerHTML='<i></i>';
+  const eb=document.createElement('div'); eb.className='effortbar'; eb.innerHTML='<i></i>';
   const btn=document.createElement('button'); btn.className='minigame-btn'; btn.textContent='振翅飞逃';
-  extra.appendChild(tb); extra.appendChild(btn);
-  const bar=tb.querySelector('i');
-  requestAnimationFrame(()=>{ bar.style.transition='transform 2.4s linear'; bar.style.transform='scaleX(0)'; });
-  let done=false;
+  extra.appendChild(tb); extra.appendChild(eb); extra.appendChild(btn);
+  const bar=tb.querySelector('i'), fill=eb.querySelector('i');
+  requestAnimationFrame(()=>{ bar.style.transition='transform 3.6s linear'; bar.style.transform='scaleX(0)'; });
+  let done=false, prog=0;
+  const NEED=14;
   const t0=performance.now();
   const finish=(fast)=>{
     if(done) return; done=true;
-    btn.disabled=true; btn.style.display='none'; tb.style.display='none';
+    btn.disabled=true; btn.style.display='none'; tb.style.display='none'; eb.style.display='none';
     if(fast){ hpDelta(-10); safetyDelta(-10);
       $('event-lines').innerHTML=`你在最后一刻腾空而起，心跳如鼓。\n受惊之后，很久都无法安心觅食。\n<span class="fx bad">体力 -10 ｜ 安全度下降</span>`;
-    }else{ hpDelta(-15); safetyDelta(-10);
-      $('event-lines').innerHTML=`你飞得慢了半拍，狗叫声几乎贴着翅膀掠过。\n你落到了更远的滩涂上，浑身发抖。\n<span class="fx bad">体力 -15 ｜ 安全度下降</span>`;
+      after();
+    }else{
+      /* 没能飞起来 → 逃不出去，必须重试 */
+      hpDelta(-8); safetyDelta(-5);
+      $('event-lines').innerHTML=`狗扑到了跟前——你没能在它追上之前飞起来！\n翅膀贴着泥面乱窜，狼狈不堪。\n<span class="fx bad">体力 -8 ｜ 安全度下降</span>\n\n振翅要快，再试一次！`;
+      const c=document.createElement('button'); c.className='btn'; c.textContent='再试一次';
+      c.onclick=()=>{ QUEUE.splice(QI,0,()=>escapeGame(idx,total)); runNext(); };
+      $('event-actions').appendChild(c);
     }
-    if(round<2){
+  };
+  const after=()=>{
+    if(idx<total-1){
       const c=document.createElement('button'); c.className='btn'; c.textContent='继续'; c.onclick=runNext;
       $('event-actions').appendChild(c);
     }else{
@@ -1008,38 +1272,76 @@ function escapeGame(round){
       $('event-actions').appendChild(c);
     }
   };
-  btn.onclick=()=>finish(performance.now()-t0<2400);
-  setTimeout(()=>finish(false), 2500);
+  btn.onclick=()=>{
+    if(done) return;
+    prog++;
+    fill.style.transform=`scaleX(${Math.min(1,prog/NEED)})`;
+    if(prog>=NEED) finish(performance.now()-t0<3600);
+  };
+  setTimeout(()=>finish(false), 3700);
 }
-/* 渔网小游戏 */
-function netGame(){
-  if(Math.random()<0.35){
+/* 渔网小游戏（severe: 渔网完全没处理时更危险） */
+function netGame(severe){
+  if(Math.random()<(severe?0.35:0.5)){
     eventView('forageClean',
       `你的脚掠过水底，忽然碰到一团滑腻的东西。\n你本能地一蹬——还好，只是缠住的水草。\n\n但这片水域，让你不敢再大意。`,
       [['继续',runNext]]);
     return;
   }
-  hpDelta(-35); safetyDelta(-15);
+  hpDelta(severe?-30:-18); safetyDelta(-15);
   setArt('event-art','netTrap');
-  $('event-lines').innerHTML = `你的脚被水下的什么东西缠住了——\n是那张被丢弃的渔网！\n\n越挣越紧。你必须拼命挣扎。\n<span class="fx bad">体力 -35</span>`;
+  $('event-lines').innerHTML = `你的脚被水下的什么东西缠住了——\n是那张被丢弃的渔网！\n\n网越挣越紧。不停快速点击「挣扎」，\n一旦停下来，力气就会被网一点点拽回去。\n<span class="fx bad">体力 -${severe?30:18}</span>`;
   $('event-actions').innerHTML='';
   const extra=$('event-extra'); extra.innerHTML='';
+  const eb=document.createElement('div'); eb.className='effortbar'; eb.innerHTML='<i></i>';
   const log=document.createElement('div'); log.className='mg-log';
   const btn=document.createElement('button'); btn.className='minigame-btn'; btn.textContent='挣扎！';
-  extra.appendChild(btn); extra.appendChild(log);
-  let n=0;
-  btn.onclick=()=>{
-    n++;
-    const dead = hpDelta(-4);
-    log.textContent = dead ? '……' : `你用尽全身力气扭动身体（${n}/4）`;
-    if(n>=4 || dead){
-      btn.style.display='none';
-      if(S.hp<=0){ deathSequence(); return; }
-      $('event-lines').innerHTML = `你终于挣脱了。\n脚上留下深深的勒痕，羽毛凌乱不堪。\n\n从今往后，你会害怕每一片安静的水域。\n<span class="fx bad">体力持续流失</span>`;
-      const c=document.createElement('button'); c.className='btn'; c.textContent='继续'; c.onclick=runNext;
-      $('event-actions').appendChild(c);
-    }
+  extra.appendChild(eb); extra.appendChild(btn); extra.appendChild(log);
+  const fill=eb.querySelector('i');
+  const NEED = severe?14:12;          // 需要挣脱的力度
+  const DECAY = 1.4;                  // 每秒松懈回退的力度
+  const perClick = severe?1.4:1;      // 每次挣扎的体力代价
+  let prog=0, dead=false;
+  const lines=['你用尽全身力气扭动身体','网又勒紧了几分','羽毛在挣扎中凌乱不堪','你蹬直了腿，再挣一下','泥水四溅，网却越缠越乱'];
+  const decayTimer=setInterval(()=>{
+    if(done) return;
+    prog=Math.max(0,prog-DECAY*0.4);
+    fill.style.transform=`scaleX(${Math.min(1,prog/NEED)})`;
+  },400);
+  let done=false;
+  const succeed=()=>{
+    done=true; clearInterval(decayTimer);
+    btn.style.display='none'; eb.style.display='none'; log.textContent='';
+    if(S.hp<=0){ deathSequence(); return; }
+    $('event-lines').innerHTML = `你终于挣脱了。\n脚上留下深深的勒痕，羽毛凌乱不堪。\n\n从今往后，你会害怕每一片安静的水域。\n<span class="fx bad">体力持续流失</span>`;
+    const c=document.createElement('button'); c.className='btn'; c.textContent='继续'; c.onclick=runNext;
+    $('event-actions').appendChild(c);
   };
+  btn.onclick=()=>{
+    if(done) return;
+    prog++;
+    hpDelta(-perClick);
+    fill.style.transform=`scaleX(${Math.min(1,prog/NEED)})`;
+    log.textContent=lines[Math.floor(Math.random()*lines.length)]+'……';
+    if(S.hp<=0){ done=true; clearInterval(decayTimer); deathSequence(); return; }
+    if(prog>=NEED) succeed();
+  };
+}
+/* 寒潮 → 琵鹭选择 */
+function coldChoice(){
+  choiceView(`一月，寒潮南下。\n气温骤降，滩涂结了薄冰。\n\n这个夜晚，怎么熬过去？`,[
+    {t:"缩进避风的泥坑，一动不动", s:"省下体力，但要饿一整夜",
+      fn:()=>{ hpDelta(-5);
+        return {art:'storm', line:`你把喙埋进背羽，缩成一团。\n寒风刮了一整夜，你终于撑到了天亮。\n<span class="fx bad">体力 -5</span>`}; }},
+    {t:"冒着寒风继续觅食", s:"赌一把——也许能找到吃的",
+      fn:()=>{ if(Math.random()<0.5){ hpDelta(8);
+          return {art:'forageClean', line:`风很大，但退潮的泥坑里困住了不少小鱼。\n这顿冒险的饭，吃得值。\n<span class="fx">体力 +8</span>`}; }
+        hpDelta(-10);
+        return {art:'storm', line:`风太大了，你几次下喙都被吹歪。\n不仅没吃到什么，还耗掉了体力。\n<span class="fx bad">体力 -10</span>`}; }},
+    {t:"和同伴挤在一起取暖", s:"大家靠在一起，风就小了",
+      fn:()=>{ hpDelta(-3); safetyDelta(5);
+        return {art:'storm', line:`十几只琵鹭挤在背风的泥滩上。\n彼此的体温，撑过了最冷的时刻。\n<span class="fx bad">体力 -3 ｜ 安全度上升</span>`}; }}
+  ]);
 }
 
 /* 遇难 */
@@ -1050,7 +1352,7 @@ function deathSequence(){
     '老鱼塘被建成了商业区，它失去了最安全的夜栖地',
     '游客一次次翻过围栏走近，它被迫飞逃、体力耗尽',
     '那张废弃的渔网没有被上报回收，它的脚被缠住，再也无法飞翔',
-    '清洁废水被倒进雨水管，滩涂变浑，它花了远超想象的时间觅食'
+    '半锅油汤被倒进了雨水篦子，滩涂变浑，它花了远超想象的时间觅食'
   ];
   let recap='';
   for(let i=0;i<4;i++){
@@ -1064,26 +1366,42 @@ function deathSequence(){
 
 /* 成功越冬 */
 function endWinter(){
-  $('hud').classList.remove('on');
-  if(S.hp>=40){
-    S.survived=true;
-    eventView('spring',
-      `2025 年 3 月，春天。\n\n你成功了。\n体力充沛，羽毛丰满。\n\n你和其他黑脸琵鹭一起，启程北归。\n8000 公里的旅程，你完成了一半。\n\n而这一切，要感谢深圳湾为你提供的——\n安全的栖息地、充足的食物、较少的干扰。\n\n这些，都源于几个月里，\n许多普通人做出的善意选择。`,
-      [['回到人类视角',()=>{ show('s-brief3'); }]]);
-  }else{
-    S.survived=true;
-    eventView('spring',
-      `2025 年 3 月，春天。\n\n你活下来了——勉强。\n这个冬天消耗了你太多，\n北归的路上，每一步都更加艰难。\n\n不是所有的同伴都能撑到这里。\n你回头望了一眼深圳湾，\n振翅，向北飞去。`,
-      [['回到人类视角',()=>{ show('s-brief3'); }]]);
-  }
+  S.survived=true;
+  const steps=[];
+  /* 第一步：寒潮退去（冬天到春天，慢慢来） */
+  steps.push(()=>{ setJourney(5); eventView('storm',
+    `二月末，寒潮终于退了。\n\n气温一天天回升，\n滩涂上的薄冰悄悄融化，化成细细的水痕。${
+      wOf('r1',3)<0
+        ? `\n\n雨水篦子不再涌出油污——\n经过一整个冬天的治理，\n湾里的水，正在一点点变清。`
+        : ``
+    }\n\n你还不知道，\n身体里攒下的每一分体力，\n都决定着北归路上的一步一里。`,
+    [['继续',runNext]]); });
+  /* 第二步：融化（污水到清水、冬到春的中间过渡） */
+  steps.push(()=>eventView('thaw',
+    `三月，深圳湾。\n\n水位渐退，鱼群从深处回来了，\n红树林的呼吸根冒出滩涂，冒出新绿。\n\n同伴们开始试飞、盘旋、鸣叫——\n北归的时刻，快到了。`,
+    [['继续',runNext]]));
+  /* 第三步：春天 */
+  steps.push(()=>{
+    $('hud').classList.remove('on');
+    if(S.hp>=40){
+      eventView('spring',
+        `2025 年 3 月，春天。\n\n你成功了。\n体力充沛，羽毛丰满。\n\n你和其他黑脸琵鹭一起，启程北归。\n8000 公里的旅程，你完成了一半。\n\n而这一切，要感谢深圳湾为你提供的——\n安全的栖息地、充足的食物、较少的干扰。\n\n这些，都源于几个月里，\n许多普通人做出的善意选择。`,
+        [['回到人类视角',()=>{ show('s-brief3'); }]]);
+    }else{
+      eventView('spring',
+        `2025 年 3 月，春天。\n\n你活下来了——勉强。\n这个冬天消耗了你太多，\n北归的路上，每一步都更加艰难。\n\n不是所有的同伴都能撑到这里。\n你回头望了一眼深圳湾，\n振翅，向北飞去。`,
+        [['回到人类视角',()=>{ show('s-brief3'); }]]);
+    }
+  });
+  runEvents(steps);
 }
 
 /* =========================================================
    第四部分：结局
 ========================================================= */
 function calcEnding(){
-  const g1=S.r1.filter((v,i)=>DECISIONS[i].opts[v].good).length;
-  const g2=S.r2.filter((v,i)=>DECISIONS[i].opts[v].good).length;
+  const g1=S.r1.filter((v,i)=>DECISIONS[i].opts[v].w>0).length;
+  const g2=S.r2.filter((v,i)=>DECISIONS[i].opts[v].w>0).length;
   const changed=S.r1.filter((v,i)=>v!==S.r2[i]).length;
   let key;
   if(g1===5) key='A';
@@ -1101,11 +1419,33 @@ function finishStory(){
   if(r.key!=='D'){
     txt += `\n\n（在这段体验中，那只琵鹭${S.survived?'成功越冬，北归繁殖':'没能熬过这个冬天'}）`;
   }
-  $('ending-text').textContent = txt;
+  /* 逐句呈现：点一下，上一句消失、下一句浮现；全部看完后展示完整版 */
+  S._paras = txt.split('\n\n');
+  S._ep = 0;
+  $('ending-text').textContent = S._paras[0];
+  $('ending-tap').classList.add('on');
+  $('silhouettes').style.display='none';
   $('silhouettes').innerHTML = CREATURES;
-  $('silhouettes').style.opacity = (r.key==='D') ? '.5' : '';
+  document.querySelector('#s-ending .coming').style.display='none';
+  document.querySelector('#s-ending .btn-row').style.display='none';
+  $('s-ending').removeEventListener('pointerdown',endingTap);
+  $('s-ending').addEventListener('pointerdown',endingTap);
   S._ending = r.key;
   show('s-ending');
+}
+function endingTap(){
+  S._ep++;
+  if(S._ep < S._paras.length){
+    $('ending-text').textContent = S._paras[S._ep];
+  }else{
+    /* 全部看完：完整展示 */
+    $('ending-text').textContent = S._paras.join('\n\n');
+    $('ending-tap').classList.remove('on');
+    $('silhouettes').style.display='';
+    document.querySelector('#s-ending .coming').style.display='';
+    document.querySelector('#s-ending .btn-row').style.display='';
+    $('s-ending').removeEventListener('pointerdown',endingTap);
+  }
 }
 
 /* =========================================================
@@ -1208,7 +1548,7 @@ $('btn-download').onclick=()=>{
   toast('证书已下载');
 };
 $('btn-share').onclick=async ()=>{
-  const text=`我在《如果我是它》互动科普中完成了人类与黑脸琵鹭的双视角体验（${ENDINGS[S._ending].tag.split('·')[1].trim()}），获得了深圳湾红树林生态学习证书。2025年，全球只剩 7,081 只黑脸琵鹭——如果我是它，我需要什么？`;
+  const text=`我在《如果我是你》互动科普中完成了人类与黑脸琵鹭的双视角体验（${ENDINGS[S._ending].tag.split('·')[1].trim()}），获得了深圳湾红树林生态学习证书。2025年，全球只剩 7,081 只黑脸琵鹭——如果我是它，我需要什么？`;
   try{
     if(navigator.share){ await navigator.share({title:'深圳湾红树林生态学习证书', text}); }
     else{ await navigator.clipboard.writeText(text); toast('分享文案已复制'); }
