@@ -1877,8 +1877,14 @@ $('btn-view-cert').onclick=()=>{
    管理面板：双击首页的太阳进入
 ========================================================= */
 const ADMIN_PASS='hi1313littlezadmin';
-$('home-art').addEventListener('dblclick',e=>{
-  if(e.target.closest && e.target.closest('[data-sun]')) openAdmin();
+/* 双击太阳进管理面板：全局监听（intro/home 两幅画里都有太阳），
+   用 pointerdown 计时实现双击检测——鼠标和手机触摸都可靠 */
+let _sunLastTap=0;
+document.addEventListener('pointerdown',e=>{
+  if(!(e.target.closest && e.target.closest('[data-sun]'))) return;
+  const now=performance.now();
+  if(now-_sunLastTap<600){ _sunLastTap=0; openAdmin(); }
+  else _sunLastTap=now;
 });
 $('btn-admin-login').onclick=()=>{
   if($('admin-pass').value===ADMIN_PASS){
