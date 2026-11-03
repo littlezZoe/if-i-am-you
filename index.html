@@ -14,6 +14,7 @@
     --teal:#5f9ea0;
   }
   *{margin:0;padding:0;box-sizing:border-box}
+  button{touch-action:manipulation}   /* 快速连点不再触发双击缩放/点击延迟 */
   html,body{height:100%}
   body{
     background:var(--paper);
@@ -103,14 +104,15 @@
     padding:14px 20px;pointer-events:none}
   #hud.on{display:flex}
   .hud-box{background:var(--paper);border:1.5px solid var(--ink);
-    padding:8px 14px;font-size:13px;letter-spacing:.1em}
-  #hpbarwrap{width:150px}
+    padding:8px 14px;font-size:13px;letter-spacing:.1em;white-space:nowrap}
+  #hpbarwrap{width:160px}
   #hpbar{height:8px;border:1.5px solid var(--ink);margin-top:5px;position:relative}
   #hpfill{position:absolute;inset:1px auto 1px 1px;width:60%;
     background:var(--teal);transition:width .8s ease,background .5s}
   #safety-icon{font-size:15px;margin-right:6px}
   .danger-text{color:var(--danger)}
   /* 事件 */
+  #s-event{padding-top:118px}   /* 顶部留给固定的 HUD + 旅程条 */
   .event-lines{text-align:center;max-width:560px;white-space:pre-line;font-size:17px}
   .event-lines .fx{color:var(--ink-soft);font-size:14px;margin-top:14px}
   .event-lines .bad{color:var(--danger)}
@@ -150,6 +152,8 @@
     border:1.5px solid var(--ink);background:rgba(253,253,247,.85);color:var(--ink);
     border-radius:999px;padding:6px 16px;cursor:pointer;transition:background .2s,color .2s}
   #lang-btn:active{background:var(--ink);color:var(--paper)}
+  /* HUD 显示时，EN 按钮下移避开体力框 */
+  body:has(#hud.on) #lang-btn{top:72px}
   /* Toast */
   #toast{position:fixed;bottom:36px;left:50%;transform:translateX(-50%) translateY(20px);
     background:var(--ink);color:var(--paper);font-size:14px;letter-spacing:.15em;
@@ -200,6 +204,11 @@
   .ac-row b{color:var(--ink);font-weight:600}
   .ac-surv-ok{color:var(--teal)} .ac-surv-bad{color:var(--danger)}
   .admin-empty{font-size:14px;color:var(--ink-soft);letter-spacing:.2em;margin-top:30px}
+  /* 首页关卡选择 */
+  .lvl-row{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center;margin-top:16px;max-width:680px}
+  .lvl-tip{width:100%;font-size:13px;color:var(--ink-soft);letter-spacing:.15em;text-align:center}
+  .lvl-chip{font-size:13px;padding:7px 16px;border:1px solid var(--line);background:#fffdf8;border-radius:999px;cursor:pointer;letter-spacing:.05em;font-family:inherit;color:var(--ink)}
+  .lvl-chip:hover{border-color:var(--ink)}
 </style>
 </head>
 <body data-page-node-id="x3VWut5oxqJOcEZ2CdxpF4">
@@ -221,10 +230,13 @@
     <p class="poem dim" id="home-welcome" data-page-node-id="KQfKzh9lhxCWWD6Om0dwSS"></p>
     <div class="cert-badge" id="home-badge" data-page-node-id="xxgyA5mFYVbPnbnkYTKJDv">你已获得学习证书</div>
     <div class="btn-row" data-page-node-id="tkbe9CPIdF02F9pMuCmp1r">
+      <button class="btn" id="btn-continue" style="display:none">继续体验</button>
       <button class="btn" id="btn-human" data-page-node-id="oSdHHOXSPUC4iljrbA9skQ">人类视角</button>
       <button class="btn" id="btn-bird" data-page-node-id="HSBkkrqzzDjCksPPskkTmd">黑脸琵鹭</button>
+      <button class="btn" id="btn-full">完整体验</button>
       <button class="btn" id="btn-view-cert" data-page-node-id="l46tbYvytCLKO3RAxfkUpX">查看证书</button>
     </div>
+    <div class="lvl-row" id="lvl-pick" style="display:none"></div>
   </section>
 
   <!-- 开场 -->
@@ -536,6 +548,8 @@ const ART = {
     <circle cx="330" cy="40" r="34" fill="transparent" data-sun="1" style="cursor:pointer"/>
     ${waterBand(140, C.water)}
     ${mangrove(30,150,1.1)} ${mangrove(300,152,0.9)}
+    <g data-mg="left" style="cursor:pointer"><circle cx="45" cy="132" r="30" fill="transparent"/></g>
+    <g data-mg="right" style="cursor:pointer"><circle cx="313" cy="138" r="28" fill="transparent"/></g>
     ${birdsDistant()}
     <g transform="translate(-20,-26)"><g class="drift">${birdFlying()}</g></g>
   </svg>`;},
@@ -770,7 +784,6 @@ const ART = {
     <path d="M200 116 q11 -11 22 0 q11 11 22 0" stroke="#b8b2a2" stroke-width="2.2" fill="none"/>
     <path d="M330 96 q13 -12 26 0 M180 40 q12 -10 24 0" stroke="#c9c2ae" stroke-width="2" fill="none"/>
     <path d="M0 150 L400 150" stroke="${C.greyD}" stroke-width="2"/>
-    <g class="flyin">${birdFlying()}</g>
   </svg>`;},
 
   stageCall(){ return `<svg viewBox="0 0 400 220">
@@ -1023,7 +1036,7 @@ function setArt(id,name){
   el.classList.remove('slowfade'); void el.offsetWidth; el.classList.add('slowfade');
 }
 /* 旅程进度图：不预铺全程——用户每做完一个选择，琵鹭走到哪一站，那一站才亮起 */
-const JOURNEY=[['10月','抵达'],['11月','夜栖'],['12月','觅食'],['1月','渔网'],['1月','寒潮'],['3月','北归']];
+const JOURNEY=[['10月','出发'],['11月','夜栖'],['12月','觅食'],['1月','渔网'],['1月','寒潮'],['1月','抵达'],['3月','北归']];
 let jRevealed=-1;
 function setJourney(i,dead){
   const el=$('journey'); el.classList.add('on');
@@ -1822,6 +1835,19 @@ $('btn-share').onclick=async ()=>{
 $('btn-home').onclick=()=>{ goHome(); };
 
 function getCert(){ try{ return JSON.parse(localStorage.getItem('swb_cert')); }catch(e){ return null; } }
+/* —— 进度存档：退出页面后，下次首页出现「继续体验」，回到上次抵达的关卡 —— */
+function saveProg(){
+  try{ localStorage.setItem('swb_prog', JSON.stringify({
+    round:S.round, q:S.q, r1:S.r1, r2:S.r2, hp:S.hp, safety:S.safety, name:S.name
+  })); }catch(e){}
+}
+function getProg(){
+  try{
+    const p=JSON.parse(localStorage.getItem('swb_prog'));
+    return (p && p.round && Array.isArray(p.r1) && Array.isArray(p.r2)) ? p : null;
+  }catch(e){ return null; }
+}
+function clearProg(){ try{ localStorage.removeItem('swb_prog'); }catch(e){} }
 function resetProgress(){
   S.hp=60; S.safety=80; S.survived=true; S._deathShown=false; S._phase=null;
   jRevealed=-1; $('journey').innerHTML=''; $('journey').classList.remove('on');
@@ -1877,14 +1903,30 @@ $('btn-view-cert').onclick=()=>{
    管理面板：双击首页的太阳进入
 ========================================================= */
 const ADMIN_PASS='hi1313littlezadmin';
-/* 双击太阳进管理面板：全局监听（intro/home 两幅画里都有太阳），
-   用 pointerdown 计时实现双击检测——鼠标和手机触摸都可靠 */
-let _sunLastTap=0;
+/* 管理面板入口手势（首页/开场屏生效）：
+   点左树 → 双击右树 → 点左树 → 双击太阳 */
+let _aseq=0, _aTap=0;
 document.addEventListener('pointerdown',e=>{
-  if(!(e.target.closest && e.target.closest('[data-sun]'))) return;
+  const t=e.target;
+  const hit=s=>t.closest&&t.closest(s);
   const now=performance.now();
-  if(now-_sunLastTap<600){ _sunLastTap=0; openAdmin(); }
-  else _sunLastTap=now;
+  if(hit('[data-mg="left"]')){
+    _aseq = (_aseq===0||_aseq===2) ? _aseq+1 : 0;
+    _aTap=0; return;
+  }
+  if(hit('[data-mg="right"]')){
+    if(_aseq===1){
+      if(now-_aTap<600){ _aseq=2; _aTap=0; }
+      else _aTap=now;
+    } else { _aseq=0; _aTap=0; }
+    return;
+  }
+  if(hit('[data-sun]')){
+    if(_aseq===3){
+      if(now-_aTap<600){ _aseq=0; _aTap=0; openAdmin(); }
+      else _aTap=now;
+    } else { _aseq=0; _aTap=0; }
+  }
 });
 $('btn-admin-login').onclick=()=>{
   if($('admin-pass').value===ADMIN_PASS){
